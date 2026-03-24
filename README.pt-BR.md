@@ -100,6 +100,7 @@ vim config.sh               # Preencha: IP do servidor, chave API, número Whats
 |---------|----------------|
 | **Captura de Leads** | Auto-detecta mensagens recebidas, cria registros no CRM, extrai informações-chave |
 | **Qualificação BANT** | Conversa natural para avaliar Budget (Orçamento), Authority (Autoridade), Need (Necessidade), Timeline (Prazo) |
+| **Registro CRM** | Captura de dados estruturados — nome, empresa, país, pontuação ICP, interesse em produto |
 | **Pesquisa** | Busca empresa do prospect, LinkedIn, notícias — atualiza pontuação ICP |
 | **Cotação** | Gera orçamentos, envia para aprovação do proprietário, entrega ao cliente |
 | **Negociação** | Rastreia contra-propostas, recomenda estratégia, escala quando necessário |

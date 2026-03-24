@@ -100,6 +100,7 @@ C'est tout. Votre SDR IA est en ligne sur WhatsApp et prêt à vendre.
 |-------|------------------|
 | **Capture de Leads** | Détection automatique des messages entrants, création d'enregistrements CRM, extraction des informations clés |
 | **Qualification BANT** | Conversation naturelle pour évaluer Budget, Autorité, Besoin, Calendrier |
+| **Saisie CRM** | Capture de données structurées — nom, entreprise, pays, score ICP, intérêt produit |
 | **Recherche** | Recherche sur l'entreprise du prospect, LinkedIn, actualités — mise à jour du score ICP |
 | **Devis** | Génération de devis, envoi au propriétaire pour approbation, livraison au client |
 | **Négociation** | Suivi des contre-offres, recommandation de stratégie, escalade si nécessaire |

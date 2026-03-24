@@ -100,6 +100,7 @@ That's it. Your AI SDR is live on WhatsApp and ready to sell.
 |-------|-----------------|
 | **Lead Capture** | Auto-detect inbound messages, create CRM records, extract key info |
 | **BANT Qualification** | Natural conversation to assess Budget, Authority, Need, Timeline |
+| **CRM Entry** | Structured data capture — name, company, country, ICP score, product interest |
 | **Research** | Search prospect's company, LinkedIn, news — update ICP score |
 | **Quotation** | Generate quotes, send to owner for approval, deliver to customer |
 | **Negotiation** | Track counter-offers, recommend strategy, escalate when needed |
