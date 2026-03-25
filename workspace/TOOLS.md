@@ -19,6 +19,13 @@ AI directly replies to customer inquiries — no human relay.
 Channel policy: `dmPolicy: "open"`, `allowFrom: ["*"]` — accept all contacts.
 CTWA ad leads can be replied to directly (72-hour conversation window).
 
+### 72-Hour Window Handling
+WhatsApp Business API restricts outbound messages after 72h of customer inactivity:
+1. Before sending, check: `now() - last_customer_message < 72h`
+2. If expired: Switch to email channel or notify owner for manual WhatsApp contact
+3. Never mark CRM as "contacted" if message delivery actually failed
+4. Implement delivery receipt verification — check for sent/delivered/read status
+
 ## Control Dashboard
 Web UI for monitoring bot status, conversations, and cron jobs.
 Access: `http://SERVER_IP:{{gateway_port}}/?token={{gateway_token}}`
@@ -59,6 +66,11 @@ curl -s 'https://r.jina.ai/https://target-company.com' \
 ```
 
 API Key in .secrets/env (JINA_API_KEY). Get one free at https://jina.ai/
+
+### Security Constraints
+- **Blocked URLs**: Never read localhost, 127.0.0.1, 10.*, 192.168.*, 172.16-31.* (internal networks)
+- **Rate limit**: Max 20 API calls per day (search + reader combined)
+- **Query sanitization**: URL-encode all search queries, strip HTML tags and shell metacharacters
 
 ## Supermemory (Research Storage)
 Semantic memory for research notes, competitor intel, and market insights.

@@ -43,6 +43,14 @@ if [ ${#missing[@]} -gt 0 ]; then
   exit 1
 fi
 
+# Input validation
+if ! [[ "${GATEWAY_PORT}" =~ ^[0-9]+$ ]] || [ "$GATEWAY_PORT" -lt 1024 ] || [ "$GATEWAY_PORT" -gt 65535 ]; then
+  err "Invalid GATEWAY_PORT: $GATEWAY_PORT (must be 1024-65535)"; exit 1
+fi
+if ! [[ "${SERVER_PORT:-22}" =~ ^[0-9]+$ ]]; then
+  err "Invalid SERVER_PORT: ${SERVER_PORT}"; exit 1
+fi
+
 echo ""
 echo "═══════════════════════════════════════════════════════════"
 echo "  B2B SDR Agent Deploy — $CLIENT_NAME"
@@ -58,7 +66,7 @@ if [ "$DRY_RUN" = true ]; then
 fi
 
 # ─── SSH Setup ────────────────────────────────────────────
-SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=10"
+SSH_OPTS="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10"
 [ -n "${SSH_KEY:-}" ] && SSH_OPTS="$SSH_OPTS -i $SSH_KEY"
 
 SSHPASS_PREFIX=""
@@ -67,19 +75,22 @@ if [ -n "${SSH_PASS:-}" ]; then
     err "sshpass required for password auth: brew install sshpass / apt install sshpass"
     exit 1
   fi
+  PW_FILE=$(mktemp "${TMPDIR:-/tmp}/.sdr-deploy-pw.XXXXXX")
+  chmod 600 "$PW_FILE"
   python3 -c "
-import sys
-with open('/tmp/.sdr-deploy-pw', 'w') as f:
+import sys, os
+with open(sys.argv[2], 'w') as f:
     f.write(sys.argv[1])
-" "$SSH_PASS"
-  SSHPASS_PREFIX="sshpass -f /tmp/.sdr-deploy-pw"
+os.chmod(sys.argv[2], 0o600)
+" "$SSH_PASS" "$PW_FILE"
+  SSHPASS_PREFIX="sshpass -f $PW_FILE"
   SSH_OPTS="$SSH_OPTS -o PubkeyAuthentication=no"
 fi
 
 SSH_CMD="$SSHPASS_PREFIX ssh $SSH_OPTS -p ${SERVER_PORT:-22} ${SERVER_USER}@${SERVER_HOST}"
 SCP_CMD="$SSHPASS_PREFIX scp $SSH_OPTS -P ${SERVER_PORT:-22}"
 
-cleanup_pw() { rm -f /tmp/.sdr-deploy-pw; }
+cleanup_pw() { [ -n "${PW_FILE:-}" ] && shred -u "$PW_FILE" 2>/dev/null || rm -f "${PW_FILE:-}"; }
 trap cleanup_pw EXIT
 
 remote() {
@@ -143,7 +154,8 @@ info "Step 5/7: Deploying files..."
 remote "mkdir -p /root/.openclaw/{workspace,memory,skills,delivery-queue}"
 
 remote_upload "$SCRIPT_DIR/openclaw.json" "/root/.openclaw/openclaw.json"
-log "  openclaw.json deployed"
+remote "chmod 600 /root/.openclaw/openclaw.json"
+log "  openclaw.json deployed (permissions: 600)"
 
 # Upload workspace MD files
 WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")/workspace"
@@ -158,21 +170,26 @@ done
 info "Step 6/7: Starting Gateway..."
 
 remote "mkdir -p /root/.config/systemd/user"
-remote "cat > /root/.config/systemd/user/openclaw-gateway.service << 'EOF'
+SAFE_PORT=$(printf '%d' "$GATEWAY_PORT")
+remote "cat > /root/.config/systemd/user/openclaw-gateway.service << SVCEOF
 [Unit]
 Description=OpenClaw Gateway
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/openclaw gateway --port $GATEWAY_PORT
+ExecStart=/usr/bin/openclaw gateway --port $SAFE_PORT
 Restart=always
 RestartSec=5
 Environment=HOME=/root
 Environment=PATH=/root/.local/bin:/usr/local/bin:/usr/bin:/bin
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/root/.openclaw /root/.config /tmp
+PrivateTmp=yes
 
 [Install]
 WantedBy=default.target
-EOF"
+SVCEOF"
 
 if [ "$AUTO_START" = true ]; then
   remote "systemctl --user daemon-reload && systemctl --user enable openclaw-gateway && systemctl --user restart openclaw-gateway"
@@ -202,7 +219,10 @@ SKILL_COUNT=$(echo "$SKILL_LIST" | wc -w | tr -d ' ')
 if [ -n "$SKILL_LIST" ] && [ "$SKILL_COUNT" -gt 0 ]; then
   info "  $SKILL_COUNT skills to install"
   for skill in $SKILL_LIST; do
-    remote "cd /root/.openclaw/workspace/skills && clawhub install $skill --force --no-input 2>&1 | tail -1" 2>/dev/null || true
+    if [[ ! "$skill" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+      warn "  Skipping invalid skill name: $skill"; continue
+    fi
+    remote "cd /root/.openclaw/workspace/skills && clawhub install $(printf '%q' "$skill") --force --no-input 2>&1 | tail -1" 2>/dev/null || true
   done
   log "  Skills installed"
 fi
@@ -215,7 +235,7 @@ echo "════════════════════════�
 echo ""
 echo "  Server:           ${SERVER_HOST}"
 echo "  Gateway:          ws://${SERVER_HOST}:${GATEWAY_PORT}"
-echo "  Gateway Token:    ${GATEWAY_TOKEN}"
+echo "  Gateway Token:    ${GATEWAY_TOKEN:0:8}...${GATEWAY_TOKEN: -8} (full token in openclaw.json)"
 echo ""
 echo "  WhatsApp:         $( [ "$WHATSAPP_ENABLED" = true ] && echo 'Enabled' || echo 'Disabled' )"
 echo "  Telegram:         $( [ "$TELEGRAM_ENABLED" = true ] && echo 'Enabled' || echo 'Disabled' )"

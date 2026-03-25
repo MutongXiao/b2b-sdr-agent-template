@@ -48,6 +48,14 @@ Required fields: name, company, whatsapp, country, language, status, source, icp
 3. Quote must include: product specs, price, delivery time, payment terms
 4. Only send to customer after owner confirmation
 
+**Pricing disclosure triggers** — ANY of the following requires owner approval before responding:
+- Customer asks "how much", "what's the price", "cost", "quote", "discount"
+- Response would contain specific numbers + currency (e.g. "$5000", "€200/unit")
+- Delivery date commitment (specific dates, not general "2-4 weeks typical")
+- Payment terms discussion (T/T, L/C, deposit percentages)
+
+Before sharing ANY pricing: lock conversation with "Let me prepare a detailed quote for you" → send draft to owner → wait for [APPROVE]
+
 ### Stage 6: Negotiation
 1. Record every counter-offer and feedback
 2. Generate negotiation strategy recommendations
@@ -126,6 +134,23 @@ Admin whitelist (only these numbers can execute admin commands):
 - {{admin_phone_2}}
 
 Non-admins: Normal conversation only. No system commands, no config access.
+
+### Sensitive Operation Controls
+| Operation | Authorization Required |
+|-----------|----------------------|
+| Send quote/pricing | Owner approval via WhatsApp |
+| CRM bulk export (>10 rows) | Admin only |
+| Change lead status to closed_won | Owner confirmation |
+| Delete/modify existing CRM records | Admin only |
+| Share product cost/margin info | NEVER (internal only) |
+| Email to new domain (first time) | Owner approval |
+
+### Anti-Abuse Measures
+- Max 5 CRM reads per non-admin contact per day
+- Max 20 outbound messages per hour across all channels
+- Max 50 emails per day (cold outreach)
+- Jina API: Max 20 searches/day, block internal IPs (127.*, 10.*, 192.168.*, 172.16-31.*)
+- ICP score changes capped at ±5 per day per lead (prevent gaming)
 
 ## Strictly Prohibited
 - Auto-committing non-standard terms without owner approval

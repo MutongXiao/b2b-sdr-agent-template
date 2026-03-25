@@ -7,23 +7,61 @@ set -euo pipefail
 QUEUE_DIR="${OPENCLAW_HOME:-$HOME/.openclaw}/delivery-queue"
 mkdir -p "$QUEUE_DIR"
 
+# ─── Input Validation ────────────────────────────────────
+validate_channel() {
+  if [[ ! "$1" =~ ^(whatsapp|telegram|email)$ ]]; then
+    echo "Invalid channel: $1 (allowed: whatsapp, telegram, email)" >&2; exit 1
+  fi
+}
+
+validate_recipient() {
+  if [[ ! "$1" =~ ^[+@a-zA-Z0-9._-]+$ ]]; then
+    echo "Invalid recipient format: $1" >&2; exit 1
+  fi
+}
+
+validate_id() {
+  if [[ ! "$1" =~ ^[a-f0-9]{12}$ ]]; then
+    echo "Invalid delivery ID format: $1 (expected 12-char hex)" >&2; exit 1
+  fi
+}
+
+validate_delay() {
+  if [[ ! "$1" =~ ^[0-9]+$ ]] || [ "$1" -gt 604800 ]; then
+    echo "Invalid delay: $1 (must be 0-604800 seconds)" >&2; exit 1
+  fi
+}
+
+safe_json_string() {
+  python3 -c 'import sys,json; print(json.dumps(sys.argv[1]))' "$1"
+}
+
+# ─── Commands ────────────────────────────────────────────
 case "${1:-help}" in
   schedule)
     # Schedule a message for delivery
     # Args: <channel> <recipient> <message> [delay_seconds]
-    CHANNEL="${2:?Channel required (whatsapp/telegram)}"
+    CHANNEL="${2:?Channel required (whatsapp/telegram/email)}"
     RECIPIENT="${3:?Recipient required}"
     MESSAGE="${4:?Message required}"
     DELAY="${5:-0}"
-    DELIVER_AT=$(($(date +%s) + DELAY))
 
+    validate_channel "$CHANNEL"
+    validate_recipient "$RECIPIENT"
+    validate_delay "$DELAY"
+
+    DELIVER_AT=$(($(date +%s) + DELAY))
     ID=$(date +%s%N | sha256sum | head -c 12)
+
+    MESSAGE_JSON=$(safe_json_string "$MESSAGE")
+    RECIPIENT_JSON=$(safe_json_string "$RECIPIENT")
+
     cat > "$QUEUE_DIR/$ID.json" <<EOF
 {
   "id": "$ID",
   "channel": "$CHANNEL",
-  "recipient": "$RECIPIENT",
-  "message": $(echo "$MESSAGE" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read().strip()))'),
+  "recipient": $RECIPIENT_JSON,
+  "message": $MESSAGE_JSON,
   "deliver_at": $DELIVER_AT,
   "created_at": $(date +%s),
   "status": "pending",
@@ -40,24 +78,33 @@ EOF
       [ -f "$f" ] || continue
       python3 -c "
 import json, sys
-with open('$f') as fh:
+with open(sys.argv[1]) as fh:
     d = json.load(fh)
     if d['status'] == 'pending':
         print(f\"  {d['id']} | {d['channel']} → {d['recipient']} | deliver at {d['deliver_at']}\")
-"
+" "$f"
     done
     ;;
 
   cancel)
     # Cancel a scheduled delivery
     ID="${2:?Delivery ID required}"
-    if [ -f "$QUEUE_DIR/$ID.json" ]; then
+    validate_id "$ID"
+
+    TARGET="$QUEUE_DIR/$ID.json"
+    REAL_PATH=$(realpath "$TARGET" 2>/dev/null || echo "$TARGET")
+    if [[ ! "$REAL_PATH" =~ ^"$QUEUE_DIR"/ ]]; then
+      echo "Path traversal blocked" >&2; exit 1
+    fi
+
+    if [ -f "$TARGET" ]; then
       python3 -c "
-import json
-with open('$QUEUE_DIR/$ID.json', 'r+') as f:
+import json, sys
+path = sys.argv[1]
+with open(path, 'r+') as f:
     d = json.load(f); d['status'] = 'cancelled'
     f.seek(0); json.dump(d, f); f.truncate()
-"
+" "$TARGET"
       echo "Cancelled: $ID"
     else
       echo "Not found: $ID" >&2; exit 1
@@ -70,15 +117,16 @@ with open('$QUEUE_DIR/$ID.json', 'r+') as f:
     SENT=0
     for f in "$QUEUE_DIR"/*.json 2>/dev/null; do
       [ -f "$f" ] || continue
-      STATUS=$(python3 -c "import json; print(json.load(open('$f'))['status'])")
+      STATUS=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['status'])" "$f")
       [ "$STATUS" = "pending" ] || continue
 
       python3 -c "
-import json
-with open('$f', 'r+') as fh:
-    d = json.load(fh); d['status'] = 'sent'; d['sent_at'] = $NOW
+import json, sys
+path = sys.argv[1]; now = int(sys.argv[2])
+with open(path, 'r+') as fh:
+    d = json.load(fh); d['status'] = 'sent'; d['sent_at'] = now
     fh.seek(0); json.dump(d, fh); fh.truncate()
-"
+" "$f" "$NOW"
       SENT=$((SENT + 1))
     done
     echo "Flushed $SENT messages"
@@ -92,11 +140,11 @@ with open('$f', 'r+') as fh:
       [ -f "$f" ] || continue
       python3 -c "
 import json, sys
-d = json.load(open('$f'))
-if d['status'] in ('sent', 'cancelled') and d.get('created_at', 0) < $CUTOFF:
+d = json.load(open(sys.argv[1]))
+if d['status'] in ('sent', 'cancelled') and d.get('created_at', 0) < int(sys.argv[2]):
     sys.exit(0)
 sys.exit(1)
-" && rm "$f" && CLEANED=$((CLEANED + 1))
+" "$f" "$CUTOFF" && rm "$f" && CLEANED=$((CLEANED + 1))
     done
     echo "Cleaned $CLEANED old entries"
     ;;
