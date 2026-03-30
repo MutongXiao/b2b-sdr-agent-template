@@ -14,7 +14,7 @@ Built on [OpenClaw](https://openclaw.dev), battle-tested with real B2B export co
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              AI SDR Agent                        │
+│              AI SDR Agent                       │
 ├─────────────────────────────────────────────────┤
 │  IDENTITY.md   → Who am I? Company, role        │
 │  SOUL.md       → Personality, values, rules     │
