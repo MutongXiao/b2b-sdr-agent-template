@@ -140,6 +140,20 @@ That's it. Your AI SDR is live on WhatsApp and ready to sell.
 - **MemoryLake**: Session context, conversation summaries — auto-recalled per conversation
 - **MemOS Cloud**: Cross-session behavior patterns — auto-captured
 
+### Anti-Amnesia System (NEW)
+
+AI agents lose context in long conversations and across sessions. Our **3-layer anti-amnesia architecture** solves this:
+
+| Layer | Engine | What It Does |
+|-------|--------|-------------|
+| **L1: MemOS** | Structured memory | Extracts BANT, commitments, objections every turn. Injects into System Prompt at conversation start. |
+| **L2: Proactive Summary** | Token monitoring | Compresses history at 65% context usage. Zero information loss — numbers, quotes, commitments preserved verbatim. |
+| **L3: ChromaDB** | Long-term RAG | Stores every turn as embeddings. Auto-retrieves when customer references past conversations or returns after 7+ days. |
+
+**Result**: Your AI SDR remembers every customer, every quote, every commitment — even after 100+ turns or weeks of silence.
+
+> See **[ANTI-AMNESIA.md](./ANTI-AMNESIA.md)** for the full implementation spec with code, prompts, and deployment guide.
+
 ## The 7 Layers Explained
 
 | Layer | File | Purpose |
