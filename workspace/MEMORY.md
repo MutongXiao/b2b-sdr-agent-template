@@ -5,15 +5,15 @@
 ```
 Message In → L1 MemOS auto-recall
            → L3 chroma:store (every turn)
-           → L2 proactive-summary (at 65% token usage)
+           → L2 dual-threshold (50% background save → 65% compress)
            → L4 CRM snapshot (daily 12:00 fallback)
 ```
 
 | Layer | Engine | How It Works | Your Action |
 |-------|--------|-------------|-------------|
 | **L1: MemOS** | Structured memory | Auto-injects past memories at conversation start, auto-captures BANT/commitments/objections at end | Read what it gives you |
-| **L2: Proactive Summary** | Token monitoring | Compresses at 65% context usage via haiku-class model. Zero info loss on numbers/quotes/commitments | Embed key-data summary past 20 turns |
-| **L3: ChromaDB** | Per-turn vector store | Every turn stored with customer_id isolation + auto-tagging (quotes, commitments, objections) | Use `chroma:search` before outreach |
+| **L2: Proactive Summary** | Dual-threshold monitoring | **50%**: background save key facts to ChromaDB (non-blocking). **65%**: full compression via haiku-class model. Zero info loss on numbers/quotes/commitments | Embed key-data summary past 20 turns |
+| **L3: ChromaDB** | Per-turn store | Every turn stored with customer_id isolation + auto-tagging. Search uses recency-weighted ranking | Use `chroma:search` before outreach |
 | **L4: CRM Snapshot** | Daily backup | 12:00 daily pipeline snapshot to ChromaDB as disaster recovery | None — automatic |
 
 ## Operating Rules (Every Conversation)
@@ -43,6 +43,7 @@ memory:stats
 chroma:store --customer "+971501234567" --turn 5 --user "price?" --agent "let me quote..." --stage qualifying --topic pricing
 chroma:search "pricing discussion Dubai" --customer "+971501234567" --limit 5
 chroma:recall "+971501234567" --limit 10
+chroma:expand <turn_id>   -- View full original text of a compressed/archived turn
 chroma:snapshot
 chroma:stats
 ```
@@ -80,15 +81,22 @@ Every stored turn is automatically analyzed and tagged:
 | `has_order` | "place order", "confirm purchase", "deposit" |
 | `has_sample` | "sample", "trial", "prototype" |
 
-## L2 Compression Rules
+## L2 Dual-Threshold Compression
 
-When token usage hits 65%, the proactive summary engine:
+**At 50% token usage** (BACKGROUND_SAVE):
+- Non-blocking background extraction of key facts
+- Facts stored to ChromaDB — no conversation compression
+- Protects critical data early in case of unexpected context loss
+
+**At 65% token usage** (COMPRESS):
 1. Updates MemOS first (safety net)
 2. Compresses with haiku-class model (fast, cheap)
 3. **Preserves verbatim**: all numbers, quotes, commitments, BANT data
 4. **Compresses**: small talk, repeated intros, multi-round confirmations
 5. Stores compressed summary in ChromaDB
 6. Keeps last 3 raw turns uncompressed
+
+**Recover compressed turns**: Use `chroma:expand <turn_id>` to view full original text.
 
 ## CRM Column Mapping
 > See USER.md → CRM Configuration

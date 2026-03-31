@@ -9,6 +9,7 @@
  *   node chroma.mjs store --customer <id> --turn <n> --user <msg> --agent <msg> [--stage <s>] [--topic <t>]
  *   node chroma.mjs search <query> [--customer <id>] [--limit <n>]
  *   node chroma.mjs recall <customer_id> [--limit <n>]
+ *   node chroma.mjs expand <turn_id>
  *   node chroma.mjs snapshot
  *   node chroma.mjs stats
  */
@@ -74,6 +75,28 @@ function storeTurn({ customer, turn, user, agent, stage, topic }) {
   return id;
 }
 
+// ─── Ranking: lexical overlap + recency decay + tag boost ─────
+const TAG_WEIGHTS = { has_order: 0.12, has_quote: 0.10, has_commitment: 0.10, has_objection: 0.08, has_sample: 0.05 };
+
+function rankResult(doc, queryWords) {
+  // Factor 1: normalized lexical overlap (0-1)
+  const textLower = doc.text.toLowerCase();
+  const matchCount = queryWords.reduce((s, w) => s + (textLower.includes(w) ? 1 : 0), 0);
+  const lexical = queryWords.length > 0 ? matchCount / queryWords.length : 0;
+
+  // Factor 2: recency decay — half-life 30 days, floor at 0.5
+  const ageDays = doc.timestamp ? (Date.now() - new Date(doc.timestamp).getTime()) / 86400000 : 30;
+  const recency = Math.max(0.5, 1 - ageDays / 60);
+
+  // Factor 3: tag boost
+  let tagBoost = 0;
+  for (const [tag, weight] of Object.entries(TAG_WEIGHTS)) {
+    if (doc[tag]) tagBoost += weight;
+  }
+
+  return lexical * 0.5 + recency * 0.3 + tagBoost;
+}
+
 function search(query, customer, limit = 5) {
   const queryWords = query.toLowerCase().split(/\s+/);
   const results = [];
@@ -88,13 +111,9 @@ function search(query, customer, limit = 5) {
     for (const file of readdirSync(dir).filter(f => f.endsWith('.json'))) {
       try {
         const doc = JSON.parse(readFileSync(join(dir, file), 'utf-8'));
-        if (doc.type === 'crm_snapshot') continue; // skip snapshots in search
-        const textLower = doc.text.toLowerCase();
-        const score = queryWords.reduce((s, w) => s + (textLower.includes(w) ? 1 : 0), 0);
-        // Boost tagged turns
-        if (doc.has_quote) score + 0.5;
-        if (doc.has_commitment) score + 0.5;
-        if (score > 0) results.push({ ...doc, score });
+        if (doc.type === 'crm_snapshot') continue;
+        const score = rankResult(doc, queryWords);
+        if (score > 0.1) results.push({ ...doc, score: Math.round(score * 1000) / 1000 });
       } catch { /* skip */ }
     }
   }
@@ -136,6 +155,38 @@ function snapshot() {
 
   writeFileSync(join(CHROMA_DIR, `${id}.json`), JSON.stringify(doc, null, 2));
   console.log(`CRM snapshot marker created: ${id}`);
+}
+
+function expand(id) {
+  const dirs = readdirSync(CHROMA_DIR, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => join(CHROMA_DIR, d.name));
+
+  for (const dir of dirs) {
+    const file = join(dir, `${id}.json`);
+    if (existsSync(file)) {
+      const doc = JSON.parse(readFileSync(file, 'utf-8'));
+      console.log(`=== Turn ${doc.turn_number || '?'} — ${doc.customer_id || 'unknown'} (${doc.timestamp || '?'}) ===`);
+      console.log(`Stage: ${doc.stage || 'unknown'} | Topic: ${doc.topic || 'general'}`);
+      const tags = Object.entries(TAG_WEIGHTS).filter(([t]) => doc[t]).map(([t]) => t);
+      if (tags.length) console.log(`Tags: ${tags.join(', ')}`);
+      console.log(`\n--- Customer ---\n${doc.user_message || '(empty)'}`);
+      console.log(`\n--- Agent ---\n${doc.agent_response || '(empty)'}`);
+      console.log(`\n=== End ===`);
+      return doc;
+    }
+  }
+
+  // Also check top-level files (snapshots)
+  const topFile = join(CHROMA_DIR, `${id}.json`);
+  if (existsSync(topFile)) {
+    const doc = JSON.parse(readFileSync(topFile, 'utf-8'));
+    console.log(JSON.stringify(doc, null, 2));
+    return doc;
+  }
+
+  console.log(`Turn ${id} not found in any customer directory.`);
+  return null;
 }
 
 function stats() {
@@ -208,6 +259,9 @@ switch (command) {
   case 'recall':
     console.log(JSON.stringify(recall(opts._positional || args[0], parseInt(opts.limit) || 10), null, 2));
     break;
+  case 'expand':
+    expand(opts._positional || args[0]);
+    break;
   case 'snapshot':
     snapshot();
     break;
@@ -215,5 +269,5 @@ switch (command) {
     stats();
     break;
   default:
-    console.log('Usage: chroma.mjs <store|search|recall|snapshot|stats> [args]');
+    console.log('Usage: chroma.mjs <store|search|recall|expand|snapshot|stats> [args]');
 }

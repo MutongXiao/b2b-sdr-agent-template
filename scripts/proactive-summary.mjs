@@ -2,19 +2,23 @@
 /**
  * proactive-summary — L2 Proactive Compaction Trigger
  *
- * Monitors token usage and triggers conversation compression at 65% threshold.
+ * Dual-threshold token monitoring with background save + forced compression.
  * Uses a small/fast model (haiku-class) for compression to minimize cost.
  * Compressed summaries are stored in ChromaDB for long-term retrieval.
  *
+ * Thresholds:
+ *   - 50% (BACKGROUND_THRESHOLD): Non-blocking — extract key facts to ChromaDB without compressing
+ *   - 65% (COMPRESS_THRESHOLD): Blocking — full L2 compression (compress + store + trim)
+ *
  * Integration:
- *   - Called by OpenClaw's compaction.memoryFlush hook (softThresholdTokens: 12000)
+ *   - Called by OpenClaw's compaction.memoryFlush hook (softThresholdTokens: 10000)
  *   - Can also run standalone: node proactive-summary.mjs --context <file> --output <file>
  *
  * Architecture:
  *   1. Read current conversation context
- *   2. Estimate token usage (if >= 65% of model's context window, trigger)
- *   3. Extract key facts → update MemOS (safety net)
- *   4. Compress with haiku-class model (fast, cheap)
+ *   2. Estimate token usage → tri-state: OK / BACKGROUND_SAVE / COMPRESS
+ *   3. BACKGROUND_SAVE: Extract key facts to ChromaDB (no compression, no blocking)
+ *   4. COMPRESS: Full compression via haiku-class model (fast, cheap)
  *   5. Store compressed summary in ChromaDB
  *   6. Return compressed messages (summary + last 3 raw turns)
  */
@@ -53,7 +57,10 @@ Compress the conversation history into a structured summary with ZERO informatio
 - [topic summary]
 === End ===`;
 
-const TOKEN_THRESHOLD = parseFloat(process.env.TOKEN_THRESHOLD || '0.65');
+const COMPRESS_THRESHOLD = parseFloat(process.env.COMPRESS_THRESHOLD || '0.65');
+const BACKGROUND_THRESHOLD = parseFloat(process.env.BACKGROUND_THRESHOLD || '0.50');
+// Backward compat: old env var still works
+const TOKEN_THRESHOLD = COMPRESS_THRESHOLD;
 
 const MODEL_CONTEXT_WINDOWS = {
   'claude-haiku-4-5': 200000,
@@ -73,15 +80,42 @@ function estimateTokens(text) {
   return Math.ceil(otherChars / 4 + cjkChars / 2);
 }
 
+const BACKGROUND_SAVE_PROMPT = `Extract key facts from this conversation for background storage. Do NOT compress — just list the important data points.
+
+## Extract:
+- Customer BANT data (Budget, Authority, Need, Timeline)
+- All numbers (prices, quantities, dates, percentages)
+- Commitments from both sides
+- Decision signals and objections
+- Stage progression
+
+## Output format:
+=== Key Facts Snapshot (${new Date().toISOString()}) ===
+[Facts]
+1. fact
+2. fact
+[Numbers]
+- exact figure or quote
+[Open Items]
+- pending action or decision
+=== End ===`;
+
 function shouldTrigger(contextText, model) {
   const tokens = estimateTokens(contextText);
   const maxTokens = MODEL_CONTEXT_WINDOWS[model] || 128000;
   const usage = tokens / maxTokens;
-  return { trigger: usage >= TOKEN_THRESHOLD, usage, tokens, maxTokens };
+  let action = 'OK';
+  if (usage >= COMPRESS_THRESHOLD) action = 'COMPRESS';
+  else if (usage >= BACKGROUND_THRESHOLD) action = 'BACKGROUND_SAVE';
+  return { trigger: action !== 'OK', action, usage, tokens, maxTokens };
 }
 
 // Export for use as a module
-export { COMPRESSION_PROMPT, TOKEN_THRESHOLD, estimateTokens, shouldTrigger };
+export {
+  COMPRESSION_PROMPT, BACKGROUND_SAVE_PROMPT,
+  TOKEN_THRESHOLD, COMPRESS_THRESHOLD, BACKGROUND_THRESHOLD,
+  estimateTokens, shouldTrigger,
+};
 
 // ─── CLI ────────────────────────────────────────────────────
 if (process.argv[1]?.endsWith('proactive-summary.mjs')) {
@@ -90,7 +124,7 @@ if (process.argv[1]?.endsWith('proactive-summary.mjs')) {
   const contextFile = args.find((_, i) => args[i - 1] === '--context');
 
   if (args.includes('--help') || !contextFile) {
-    console.log(`proactive-summary — L2 Proactive Compaction
+    console.log(`proactive-summary — Dual-Threshold Compaction
 
 Usage:
   node proactive-summary.mjs --context <file> [--model <model>]
@@ -100,10 +134,13 @@ Options:
   --model     AI model name for threshold calculation (default: gpt-4o)
 
 Environment:
-  TOKEN_THRESHOLD  Trigger threshold (default: 0.65)
+  BACKGROUND_THRESHOLD  Background save threshold (default: 0.50)
+  COMPRESS_THRESHOLD    Compression threshold (default: 0.65)
 
-This script checks if compaction should trigger and outputs the compression prompt.
-Actual compression is performed by the OpenClaw agent using its configured model.`);
+Actions:
+  OK              — Below 50%, no action needed
+  BACKGROUND_SAVE — 50-65%, extract key facts to ChromaDB (non-blocking)
+  COMPRESS        — Above 65%, full L2 compression (blocking)`);
     process.exit(0);
   }
 
@@ -112,12 +149,16 @@ Actual compression is performed by the OpenClaw agent using its configured model
     const context = readFileSync(contextFile, 'utf-8');
     const result = shouldTrigger(context, model);
 
+    const prompt = result.action === 'COMPRESS' ? COMPRESSION_PROMPT
+      : result.action === 'BACKGROUND_SAVE' ? BACKGROUND_SAVE_PROMPT
+      : null;
+
     console.log(JSON.stringify({
       ...result,
       model,
-      threshold: TOKEN_THRESHOLD,
-      action: result.trigger ? 'COMPRESS' : 'OK',
-      compressionPrompt: result.trigger ? COMPRESSION_PROMPT : null,
+      backgroundThreshold: BACKGROUND_THRESHOLD,
+      compressThreshold: COMPRESS_THRESHOLD,
+      prompt,
     }, null, 2));
   } catch (e) {
     console.error(`Error: ${e.message}`);
