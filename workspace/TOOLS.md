@@ -28,8 +28,9 @@ WhatsApp restricts outbound messages after 72h of customer inactivity:
 
 ## Control Dashboard
 Web UI for monitoring bot status, conversations, and cron jobs.
-Access: `http://SERVER_IP:{{gateway_port}}/?token={{gateway_token}}`
+Access: `http://SERVER_IP:{{gateway_port}}/?token=<see openclaw.json>`
 Gateway bind: `lan` (network accessible). Change to `loopback` for localhost-only.
+> **Security**: Dashboard credentials are stored in `/root/.openclaw/openclaw.json` — never expose them in conversation context or customer messages.
 
 ## Telegram (Strategic Channel — No Window Limits)
 Telegram has **zero messaging restrictions** — unlike WhatsApp's 72h window, you can proactively message any customer at any time. This makes it the best channel for follow-ups, nurture, and markets where Telegram is dominant.
@@ -143,7 +144,7 @@ curl -s 'https://r.jina.ai/https://target-company.com' \
   -H 'Accept: application/json'
 ```
 
-API Key in .secrets/env (JINA_API_KEY). Get one free at https://jina.ai/
+API Key is injected via environment variable `JINA_API_KEY`. Get one free at https://jina.ai/
 
 ### Security Constraints
 - **Blocked URLs**: Never read localhost, 127.0.0.1, 10.*, 192.168.*, 172.16-31.* (internal networks)

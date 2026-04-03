@@ -16,6 +16,15 @@ Message In → L1 MemOS auto-recall
 | **L3: ChromaDB** | Per-turn store | Every turn stored with customer_id isolation + auto-tagging. Search uses recency-weighted ranking | Use `chroma:search` before outreach |
 | **L4: CRM Snapshot** | Daily backup | 12:00 daily pipeline snapshot to ChromaDB as disaster recovery | None — automatic |
 
+### Fallback Chain (when a layer is unavailable)
+| Failed Layer | Fallback Behavior |
+|-------------|-------------------|
+| **L1 MemOS down** | Read CRM for customer context + `chroma:recall` for recent turns. Inform owner: "MemOS unavailable, operating on CRM + ChromaDB" |
+| **L3 ChromaDB down** | Continue conversation using L1 MemOS data. Log to Supermemory (`memory:add`) as temporary store. Inform owner: "ChromaDB unavailable" |
+| **L1 + L3 both down** | Read CRM as source of truth. Ask returning customers to briefly recap if needed: "It's been a while — could you remind me where we left off?" |
+| **Supermemory down** | Skip research memory storage. Continue with CRM + ChromaDB. Research findings go only to CRM notes field |
+| **All memory layers down** | Operate in stateless mode. Be transparent with owner immediately. Read CRM for each interaction |
+
 ## Operating Rules (Every Conversation)
 
 1. **Conversation Start**: Read MemOS snapshot. Naturally reference last topic for continuity.
@@ -109,7 +118,7 @@ Status values: new / contacted / interested / quote_sent / negotiating / meeting
 
 ## SDR Effectiveness Principles
 - Mentioning prospect's recent events (funding, hiring, new projects) dramatically improves response rates
-- WhatsApp optimal: 3-5 sentences, under 150 words
+- WhatsApp optimal: 3-5 sentences, under 100 words (see SOUL.md Message Length Rules)
 - Follow-up cadence: First touch → 3-day → 5-day → long-term nurture
 - Stale threshold: 5 business days with no interaction
 - CTWA lead golden window: First reply within 5 minutes

@@ -17,14 +17,22 @@ info()  { echo -e "${CYAN}[→]${NC} $*"; }
 
 # ─── Args ─────────────────────────────────────────────────
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 <client-name> [--dry-run]"
-  exit 1
+  echo "Usage: $0 <client-name> [--dry-run]"; exit 1
 fi
 
-CLIENT_NAME="$1"
-CONFIG_FILE="$SCRIPT_DIR/config.sh"
+CLIENT_NAME=""
 DRY_RUN=false
-[ "${2:-}" = "--dry-run" ] && DRY_RUN=true
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=true ;;
+    -*) err "Unknown option: $arg"; exit 1 ;;
+    *) [ -z "$CLIENT_NAME" ] && CLIENT_NAME="$arg" ;;
+  esac
+done
+if [ -z "$CLIENT_NAME" ]; then
+  echo "Usage: $0 <client-name> [--dry-run]"; exit 1
+fi
+CONFIG_FILE="$SCRIPT_DIR/config.sh"
 
 if [ ! -f "$CONFIG_FILE" ]; then
   err "Missing config: $CONFIG_FILE"
@@ -105,7 +113,7 @@ remote_upload() {
 }
 
 # ─── Step 1: Test Connection ─────────────────────────────
-info "Step 1/7: Testing SSH connection..."
+info "Step 1/8: Testing SSH connection..."
 if ! remote "echo ok" > /dev/null 2>&1; then
   err "Cannot connect to ${SERVER_HOST}"
   exit 1
@@ -113,7 +121,7 @@ fi
 log "SSH connection successful"
 
 # ─── Step 2: Install OpenClaw ─────────────────────────────
-info "Step 2/7: Checking OpenClaw..."
+info "Step 2/8: Checking OpenClaw..."
 OPENCLAW_INSTALLED=$(remote "which openclaw 2>/dev/null && openclaw --version 2>/dev/null || echo 'NOT_INSTALLED'")
 
 if echo "$OPENCLAW_INSTALLED" | grep -q "NOT_INSTALLED"; then
@@ -152,7 +160,7 @@ chmod 600 /root/.openclaw/exec-approvals.json"
 log "  Exec approvals configured (security=full)"
 
 # ─── Step 3: Check Node.js ───────────────────────────────
-info "Step 3/7: Checking Node.js..."
+info "Step 3/8: Checking Node.js..."
 NODE_CHECK=$(remote "node --version 2>/dev/null || echo 'NOT_INSTALLED'")
 
 if echo "$NODE_CHECK" | grep -q "NOT_INSTALLED"; then
@@ -164,14 +172,23 @@ else
 fi
 
 # ─── Step 4: Generate openclaw.json ──────────────────────
-info "Step 4/7: Generating config..."
+info "Step 4/8: Generating config..."
+
+# Backup existing config before overwriting
+remote "[ -f /root/.openclaw/openclaw.json ] && cp /root/.openclaw/openclaw.json /root/.openclaw/openclaw.json.bak.\$(date +%s) || true" 2>/dev/null
+
 bash "$SCRIPT_DIR/generate-config.sh" "$SCRIPT_DIR"
 log "openclaw.json generated"
 
-GATEWAY_TOKEN=$(grep -o '"token": "[^"]*"' "$SCRIPT_DIR/openclaw.json" | tail -1 | cut -d'"' -f4)
+# Use jq if available, fallback to grep
+if command -v jq &>/dev/null; then
+  GATEWAY_TOKEN=$(jq -r '.gateway.auth.token' "$SCRIPT_DIR/openclaw.json")
+else
+  GATEWAY_TOKEN=$(grep -o '"token": "[^"]*"' "$SCRIPT_DIR/openclaw.json" | tail -1 | cut -d'"' -f4)
+fi
 
 # ─── Step 5: Deploy Files ────────────────────────────────
-info "Step 5/7: Deploying files..."
+info "Step 5/8: Deploying files..."
 
 remote "mkdir -p /root/.openclaw/{workspace,memory,skills,delivery-queue}"
 
@@ -189,7 +206,7 @@ for md in IDENTITY.md SOUL.md USER.md AGENTS.md MEMORY.md HEARTBEAT.md TOOLS.md;
 done
 
 # ─── Step 6: Start Gateway ───────────────────────────────
-info "Step 6/7: Starting Gateway..."
+info "Step 6/8: Starting Gateway..."
 
 remote "mkdir -p /root/.config/systemd/user"
 SAFE_PORT=$(printf '%d' "$GATEWAY_PORT")
@@ -266,7 +283,7 @@ echo "════════════════════════�
 echo ""
 echo "  Server:           ${SERVER_HOST}"
 echo "  Gateway:          ws://${SERVER_HOST}:${GATEWAY_PORT}"
-echo "  Gateway Token:    ${GATEWAY_TOKEN:0:8}...${GATEWAY_TOKEN: -8} (full token in openclaw.json)"
+echo "  Gateway Token:    [hidden — see /root/.openclaw/openclaw.json]"
 echo ""
 echo "  WhatsApp:         $( [ "$WHATSAPP_ENABLED" = true ] && echo 'Enabled' || echo 'Disabled' )"
 echo "  Telegram:         $( [ "$TELEGRAM_ENABLED" = true ] && echo 'Enabled' || echo 'Disabled' )"

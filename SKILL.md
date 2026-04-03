@@ -67,4 +67,4 @@ Architecture: `tenant → wireproxy (SOCKS5, ~4MB) → WARP account → unique C
 ## Links
 
 - [GitHub](https://github.com/iPythoning/b2b-sdr-agent-template)
-- [PulseAgent (Managed)](https://ai.pulseagent.io)
+- [PulseAgent (Managed)](https://pulseagent.io/app)

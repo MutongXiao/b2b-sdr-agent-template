@@ -23,6 +23,11 @@ info() { echo -e "${CYAN}[→]${NC} $*"; }
 TENANT_NAME="${1:-}"
 SOCKS_PORT="${2:-}"
 
+if [ -n "$TENANT_NAME" ] && [[ ! "$TENANT_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+  err "Invalid tenant name: $TENANT_NAME (only a-z, A-Z, 0-9, -, _ allowed)"
+  exit 1
+fi
+
 if [ -z "$TENANT_NAME" ]; then
   echo "Usage: $0 <tenant-name> [socks-port]"
   echo ""
@@ -56,14 +61,18 @@ if [ -n "${SSH_PASS:-}" ]; then
   command -v sshpass &>/dev/null || { err "sshpass required: brew install sshpass"; exit 1; }
   PW_FILE=$(mktemp "${TMPDIR:-/tmp}/.sdr-ip-pw.XXXXXX")
   chmod 600 "$PW_FILE"
-  echo -n "$SSH_PASS" > "$PW_FILE"
+  python3 -c "
+import sys, os
+with open(sys.argv[2], 'w') as f: f.write(sys.argv[1])
+os.chmod(sys.argv[2], 0o600)
+" "$SSH_PASS" "$PW_FILE"
   SSHPASS_PREFIX="sshpass -f $PW_FILE"
   SSH_OPTS="$SSH_OPTS -o PubkeyAuthentication=no"
 fi
 
 SSH_CMD="$SSHPASS_PREFIX ssh $SSH_OPTS -p ${SERVER_PORT:-22} ${SERVER_USER}@${SERVER_HOST}"
 
-cleanup_pw() { [ -n "${PW_FILE:-}" ] && rm -f "$PW_FILE"; }
+cleanup_pw() { [ -n "${PW_FILE:-}" ] && shred -u "$PW_FILE" 2>/dev/null || rm -f "${PW_FILE:-}"; }
 trap cleanup_pw EXIT
 
 remote() { $SSH_CMD "$@"; }
@@ -154,6 +163,10 @@ if [ -z "$SOCKS_PORT" ]; then
       fi
     done
   ")
+  if [ -z "$SOCKS_PORT" ]; then
+    err "No available port in range 40001-40099"
+    exit 1
+  fi
 fi
 
 info "  SOCKS5 port: $SOCKS_PORT"

@@ -20,13 +20,13 @@ Construido sobre [OpenClaw](https://openclaw.dev), probado en batalla con empres
 │  SOUL.md       → Personalidad, valores, reglas   │
 │  AGENTS.md     → Flujo de ventas completo (10 etapas)│
 │  USER.md       → Perfil del propietario, ICP, puntuación│
-│  HEARTBEAT.md  → Inspección del pipeline de 10 puntos│
+│  HEARTBEAT.md  → Inspección del pipeline de 13 puntos│
 │  MEMORY.md     → Arquitectura de memoria de 3 motores│
 │  TOOLS.md      → CRM, canales, integraciones     │
 ├─────────────────────────────────────────────────┤
 │  Skills        → Capacidades extensibles         │
 │  Product KB    → Tu catálogo de productos        │
-│  Cron Jobs     → 10 tareas programadas automáticas│
+│  Cron Jobs     → 13 tareas programadas automáticas│
 ├─────────────────────────────────────────────────┤
 │  OpenClaw Gateway (WhatsApp / Telegram / Email)  │
 └─────────────────────────────────────────────────┘
@@ -110,7 +110,7 @@ Eso es todo. Tu SDR con IA está en vivo en WhatsApp y listo para vender.
 | **9. Email Outreach** | Secuencias de email en frío personalizadas (Día 1/3/7/14), seguimiento automático |
 | **10. Orquestación Multicanal** | Coordinación entre canales (WhatsApp + Email + Telegram), cambio automático |
 
-### Programación Automatizada (10 Cron Jobs)
+### Programación Automatizada (13 Cron Jobs)
 
 | Horario | Tarea |
 |---------|-------|
@@ -140,6 +140,31 @@ Eso es todo. Tu SDR con IA está en vivo en WhatsApp y listo para vender.
 - **MemoryLake**: Contexto de sesión, resúmenes de conversaciones — recuperado automáticamente por conversación
 - **MemOS Cloud**: Patrones de comportamiento entre sesiones — capturado automáticamente
 
+### Sistema Anti-Amnesia de 4 Capas
+
+Los agentes de IA pierden contexto en conversaciones largas y entre sesiones. Nuestra **arquitectura anti-amnesia de 4 capas** asegura que tu SDR con IA nunca olvide:
+
+```
+Mensaje entrante ──→ L1 MemOS auto-recall (inyección de memoria estructurada)
+    │
+    ├──→ L3 ChromaDB almacenamiento por turno (aislamiento por cliente, etiquetado automático)
+    │
+    ├──→ L2 Resumen proactivo al 65% de tokens (compresión haiku, cero pérdida de información)
+    │
+    └──→ L4 Snapshot CRM diario 12:00 (respaldo de recuperación ante desastres)
+```
+
+| Capa | Motor | Qué Hace |
+|------|-------|----------|
+| **L1: MemOS** | Memoria estructurada | Extrae automáticamente BANT, compromisos y objeciones en cada turno. Los inyecta en el System Prompt al iniciar la conversación. |
+| **L2: Resumen Proactivo** | Monitoreo de tokens | Comprime al 65% de uso de contexto mediante modelo clase haiku. Todos los números, cotizaciones y compromisos se preservan textualmente. |
+| **L3: ChromaDB** | Almacenamiento vectorial por turno | Cada turno de conversación almacenado con aislamiento por `customer_id`. Etiquetado automático de cotizaciones, compromisos y objeciones. Recuperación semántica entre sesiones. |
+| **L4: Snapshot CRM** | Respaldo diario | Almacena el estado completo del pipeline diariamente en ChromaDB como recuperación ante desastres. Si cualquier capa falla, L4 tiene los datos. |
+
+**Resultado**: Tu SDR con IA recuerda cada cliente, cada cotización, cada compromiso — incluso después de 100+ turnos, semanas de silencio o reinicios del sistema.
+
+> Consulta **[ANTI-AMNESIA.md](./ANTI-AMNESIA.md)** para la especificación completa de implementación con código, prompts y guía de despliegue.
+
 ## Las 7 Capas Explicadas
 
 | Capa | Archivo | Propósito |
@@ -162,6 +187,8 @@ Capacidades preconstruidas que extienden tu SDR con IA:
 | **supermemory** | Motor de memoria semántica. Auto-captura insights de clientes, busca en todas las conversaciones. |
 | **sdr-humanizer** | Reglas para conversación natural — ritmo, adaptación cultural, anti-patrones. |
 | **lead-discovery** | Descubrimiento de leads impulsado por IA. Búsqueda web de compradores potenciales, evaluación ICP, entrada automática en CRM. |
+| **chroma-memory** | Almacenamiento de conversaciones por turno con aislamiento de clientes, etiquetado automático y snapshots de CRM. |
+| **telegram-toolkit** | Comandos de bot, teclados inline, manejo de archivos grandes y estrategias para mercados con Telegram como canal principal. |
 | **quotation-generator** | Genera automáticamente facturas proforma en PDF con membrete de empresa, soporte multi-idioma. |
 
 ### Perfiles de Skills
@@ -206,6 +233,24 @@ product-kb/
     └── generate-pi.js              # Generador de factura proforma
 ```
 
+## Panel de Control
+
+Después del despliegue, tu SDR con IA incluye un panel web integrado:
+
+```
+http://YOUR_SERVER_IP:18789/?token=YOUR_GATEWAY_TOKEN
+```
+
+El panel muestra:
+- Estado del bot en tiempo real y conexión WhatsApp
+- Historial de mensajes e hilos de conversación
+- Estado de ejecución de cron jobs
+- Monitoreo de salud de canales
+
+El token se genera automáticamente durante el despliegue y se muestra en la salida. Mantenlo privado — cualquiera con la URL+token tiene acceso completo.
+
+> **Nota de seguridad**: Establece `GATEWAY_BIND="loopback"` en config.sh para deshabilitar el acceso remoto al panel. El valor predeterminado es `"lan"` (accesible desde la red).
+
 ## Despliegue
 
 ### Prerrequisitos
@@ -236,15 +281,72 @@ SHEETS_SPREADSHEET_ID="your-google-sheets-id"
 ADMIN_PHONES="+1234567890"
 ```
 
+### Configuración de WhatsApp
+
+Por defecto, el SDR con IA acepta mensajes de **todos los contactos de WhatsApp** (`dmPolicy: "open"`). Esta es la configuración recomendada para agentes de ventas — quieres que cada cliente potencial pueda contactarte.
+
+| Configuración | Valor | Significado |
+|---------------|-------|-------------|
+| `WHATSAPP_DM_POLICY` | `"open"` (predeterminado) | Aceptar DMs de cualquiera |
+| | `"allowlist"` | Solo aceptar de `ADMIN_PHONES` |
+| | `"pairing"` | Requiere código de emparejamiento primero |
+| `WHATSAPP_GROUP_POLICY` | `"allowlist"` (predeterminado) | Solo responder en grupos de la lista blanca |
+
+Para cambiar después del despliegue, edita `~/.openclaw/openclaw.json` en el servidor:
+
+```json
+{
+  "channels": {
+    "whatsapp": {
+      "dmPolicy": "open",
+      "allowFrom": ["*"]
+    }
+  }
+}
+```
+
+Luego reinicia: `systemctl --user restart openclaw-gateway`
+
+### Aislamiento de IP de WhatsApp (Multi-Tenant)
+
+Al ejecutar múltiples agentes en el mismo servidor, cada uno debe tener una IP de salida única para que WhatsApp vea dispositivos independientes. Esto previene el bloqueo cruzado entre cuentas.
+
+```bash
+# Después de desplegar un cliente, aislar su IP de WhatsApp:
+./deploy/ip-isolate.sh acme-corp
+
+# O con un puerto SOCKS5 específico:
+./deploy/ip-isolate.sh acme-corp 40010
+```
+
+**Cómo funciona:**
+
+```
+                  ┌─ wireproxy :40001 → WARP Account A → CF IP-A
+                  │    ↑
+tenant-a ─────────┘    ALL_PROXY=socks5://host:40001
+
+tenant-b ─────────┐    ALL_PROXY=socks5://host:40002
+                  │    ↓
+                  └─ wireproxy :40002 → WARP Account B → CF IP-B
+```
+
+Cada tenant obtiene:
+- Una cuenta dedicada gratuita de [Cloudflare WARP](https://1.1.1.1/)
+- Una instancia aislada de [wireproxy](https://github.com/pufferffish/wireproxy) (~4MB RAM)
+- Una IP de salida Cloudflare única para todo el tráfico saliente (incluyendo WhatsApp)
+
+Para habilitar automáticamente durante el despliegue, establece `IP_ISOLATE=true` en `config.sh`.
+
 ### Despliegue Gestionado
 
-¿No quieres auto-hospedar? **[PulseAgent](https://ai.pulseagent.io)** ofrece agentes SDR B2B completamente gestionados con:
+¿No quieres auto-hospedar? **[PulseAgent](https://pulseagent.io/app)** ofrece agentes SDR B2B completamente gestionados con:
 - Despliegue con un clic
 - Dashboard y analíticas
 - Gestión multicanal
 - Soporte prioritario
 
-[Comenzar →](https://ai.pulseagent.io)
+[Comenzar →](https://pulseagent.io/app)
 
 ## Contribuciones
 
@@ -262,6 +364,6 @@ MIT — úsalo para cualquier cosa.
 ---
 
 <p align="center">
-  Hecho con ❤️ por <a href="https://ai.pulseagent.io">PulseAgent</a><br/>
+  Hecho con ❤️ por <a href="https://pulseagent.io/app">PulseAgent</a><br/>
   <em>Context as a Service — AI SDR para Exportación B2B</em>
 </p>

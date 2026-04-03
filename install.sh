@@ -8,7 +8,7 @@ VERSION_TAG="${SDR_VERSION:-latest}"
 REPO="iPythoning/b2b-sdr-agent-template"
 OPENCLAW_REPO="openclaw/openclaw"
 INSTALL_DIR="${SDR_INSTALL_DIR:-$HOME/b2b-sdr-agent}"
-PULSEAGENT_URL="https://ai.pulseagent.io"
+PULSEAGENT_URL="https://pulseagent.io/app"
 SIGNUP_URL="${PULSEAGENT_URL}/login?ref=installer&utm_source=cli&utm_medium=oneliner&utm_campaign=sdr-template"
 PRICING_URL="${PULSEAGENT_URL}/pricing?ref=installer&utm_source=cli&utm_medium=oneliner&utm_campaign=sdr-template"
 

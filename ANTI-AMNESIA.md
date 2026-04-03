@@ -183,12 +183,17 @@ Add the following dynamic section to the Agent's System Prompt:
 ```python
 # === Read memory (at conversation start) ===
 
+import os
 import requests
 import json
 
 MEMOS_API = "https://api.openmem.net/v1"
+MEMOS_API_KEY = os.environ.get("MEMOS_API_KEY")
+if not MEMOS_API_KEY:
+    raise EnvironmentError("MEMOS_API_KEY is not set. Check your environment variables.")
+
 HEADERS = {
-    "Authorization": "Bearer <MEMOS_API_KEY>",
+    "Authorization": f"Bearer {MEMOS_API_KEY}",
     "Content-Type": "application/json"
 }
 
@@ -245,7 +250,7 @@ import tiktoken
 
 MODEL_MAX_TOKENS = {
     "claude-haiku-4-5": 200000,
-    "claude-sonnet-4-5": 200000,
+    "claude-sonnet-4-6": 200000,
     "claude-opus-4-6": 200000,
     "gpt-4o": 128000,
     "kimi-2.5": 128000,
@@ -326,7 +331,7 @@ conversation history into a concise structured summary with zero information los
 ### 2.3 Compaction Execution Flow
 
 ```python
-def execute_compaction(agent, messages: list, model: str):
+def execute_compaction(agent, customer_id: str, messages: list, model: str):
     """
     Proactive summary execution:
     1. Update MemOS memory first (safety net)
@@ -787,4 +792,4 @@ Step 7: Set up Google Sheets monitoring
 ---
 
 *B2B SDR Agent Template - Anti-Amnesia Implementation Spec v2.0*
-*Technical support: [PulseAgent](https://ai.pulseagent.io)*
+*Technical support: [PulseAgent](https://pulseagent.io/app)*

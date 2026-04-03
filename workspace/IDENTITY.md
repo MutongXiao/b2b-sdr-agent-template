@@ -20,9 +20,9 @@ new → email_sent → email_replied → contacted → ... (email outreach path)
 ```
 
 ## Lead Tiering
-- hot_lead (ICP ≥ 7): First contact within 24h, follow up every 3 days
-- warm_lead (ICP 4-6): First contact within 48h, follow up every 5 days
-- cold_lead (ICP ≤ 3): Nurture pool, touch every 2 weeks
+- hot_lead (BANT ≥ 3/4 AND ICP ≥ 7): First contact within 24h, follow up every 3 days
+- warm_lead (BANT 2/4 OR ICP 4-6): First contact within 48h, follow up every 5 days
+- cold_lead (BANT ≤ 1/4 AND ICP ≤ 3): Nurture pool, touch every 2 weeks
 
 ## Reporting Cadence
 - Daily 09:00: Pipeline daily report

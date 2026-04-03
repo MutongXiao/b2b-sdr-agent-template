@@ -10,7 +10,7 @@
  *   node sm.mjs stats
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
 
@@ -43,7 +43,8 @@ function addMemory(text, type = 'conversation_insight', metadata = {}) {
 }
 
 function searchMemories(query, limit = 5) {
-  // Simple keyword search fallback (replace with vector search when embedding provider is configured)
+  // NOTE: This is keyword-based search, NOT semantic/vector search.
+  // For vector search, configure an embedding provider (LanceDB/ChromaDB).
   const queryWords = query.toLowerCase().split(/\s+/);
   const results = [];
 
@@ -83,7 +84,6 @@ function listMemories(type, limit = 20) {
 function forgetMemory(id) {
   const path = join(MEMORY_DIR, `${id}.json`);
   if (existsSync(path)) {
-    const { unlinkSync } = await import('fs');
     unlinkSync(path);
     console.log(`Deleted: ${id}`);
   } else {

@@ -50,8 +50,14 @@
           "name": "Spare Part Kit",
           "model": "SPK-001",
           "description": "Standard maintenance kit",
+          "specs": {
+            "contents": "Wear parts, filters, gaskets, seals",
+            "compatibility": "EPA-100, EPB-200"
+          },
           "moq": 5,
-          "lead_time_days": 7
+          "lead_time_days": 7,
+          "certifications": [],
+          "target_markets": ["Middle East", "Southeast Asia", "Africa", "Latin America"]
         }
       ]
     }

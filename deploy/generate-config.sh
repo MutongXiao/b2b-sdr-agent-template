@@ -193,5 +193,13 @@ $PROVIDERS
 }
 ENDJSON
 
+# Validate generated JSON
+if command -v jq &>/dev/null; then
+  if ! jq empty "$CONFIG_DIR/openclaw.json" 2>/dev/null; then
+    echo "✗ Generated openclaw.json is invalid JSON! Check for special characters in API keys." >&2
+    exit 1
+  fi
+fi
+
 echo "✓ Generated $CONFIG_DIR/openclaw.json"
-echo "  Gateway Token: $GATEWAY_TOKEN"
+echo "  Gateway Token: [hidden — see openclaw.json]"

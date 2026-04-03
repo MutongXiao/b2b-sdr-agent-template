@@ -11,12 +11,12 @@
     "Low maintenance design with easy-access service panels",
     "Optional IoT monitoring module"
   ],
-  "specifications": {
+  "specs": {
     "capacity": "100 units/hr",
-    "power_supply": "220V/380V, 50/60Hz",
+    "power": "220V/380V, 50/60Hz",
     "power_consumption": "15kW",
     "weight": "500kg",
-    "dimensions": "2000mm x 1500mm x 1800mm",
+    "dimensions": "2000x1500x1800mm",
     "noise_level": "< 75dB",
     "operating_temp": "0-45°C"
   },

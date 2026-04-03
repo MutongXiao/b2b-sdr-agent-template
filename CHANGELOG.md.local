@@ -1,0 +1,62 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/).
+
+## [Unreleased]
+
+### Added
+- CONTRIBUTING.md, SECURITY.md, CHANGELOG.md for open-source best practices
+- Negotiation authorization matrix in AGENTS.md (price/MOQ/delivery/sample limits)
+- Quote lock timeout mechanism (2h with escalation)
+- Cross-channel lead deduplication in Stage 1
+- Memory fallback chain (graceful degradation when L1/L3/Supermemory unavailable)
+- GDPR/data privacy compliance rules in SOUL.md
+- Sanctions compliance warnings for restricted markets (Iran, Cuba, DPRK, Syria)
+- Missing timezones: China, Japan/Korea, Australia, North America
+- JSON validation (`jq empty`) after config generation
+- Config backup before deployment (rollback support)
+- Port exhaustion detection in ip-isolate.sh
+- CRM snapshot now accepts actual pipeline data (not just a marker)
+- Search scan limit (MAX_SCAN=10000) to prevent O(N) explosion
+- 4-Layer Anti-Amnesia section synced to all 7 translated READMEs
+- Control Dashboard, WhatsApp Config, IP Isolation sections synced to all translations
+
+### Fixed
+- `sm.mjs`: `await` in sync function `forgetMemory()` — runtime crash
+- `ANTI-AMNESIA.md`: `customer_id` undefined in `execute_compaction()` 
+- `ANTI-AMNESIA.md`: MemOS API key not validated at startup
+- `ip-isolate.sh`: TENANT_NAME command injection vulnerability
+- `ip-isolate.sh`: Password file not securely erased (now uses `shred`)
+- `generate-config.sh`: Gateway token leaked to stdout
+- `deploy.sh`: Gateway token partially leaked in deploy summary
+- `deploy.sh`: `--dry-run` only worked as 2nd argument
+- `deploy.sh`: Step numbering inconsistency (was 1/7...7/8, now consistent 1/8...8/8)
+- `deploy.sh`: JSON token extraction uses `jq` when available (fallback to grep)
+- `chroma.mjs`: `sanitize()` path traversal — tightened to `[a-zA-Z0-9_]` only
+- `TOOLS.md`: Gateway token and API key paths removed from agent-readable context
+- `catalog.json`: prod-003 missing `specs`, `certifications`, `target_markets`
+- `info.json`: Field names aligned with catalog.json (`specifications` → `specs`, `power_supply` → `power`)
+- `IDENTITY.md` vs `AGENTS.md`: hot_lead criteria now consistent (BANT ≥ 3/4 AND ICP ≥ 7)
+- Cron job count unified to 13 across all READMEs, LAUNCH-CONTENT.md, social-preview.html
+- `skill-profiles.sh`: Unknown profile now warns instead of silently falling back
+
+### Changed
+- Prompt injection defense upgraded from keyword blacklist to semantic + multilingual detection
+- `supermemory` search function now clearly documented as keyword-based (not vector)
+
+## [1.0.0] - 2026-03-30
+
+### Added
+- Initial release
+- 7-layer context architecture (IDENTITY, SOUL, AGENTS, USER, HEARTBEAT, MEMORY, TOOLS)
+- 4-layer anti-amnesia memory system
+- 13 automated heartbeat inspections
+- Multi-channel support: WhatsApp, Telegram, Email
+- One-click deployment script
+- WhatsApp IP isolation (per-tenant WARP proxy)
+- 7 pre-built skills
+- 4 skill profiles (b2b_trade, lite, social, full)
+- 3 industry examples (heavy vehicles, electronics, textiles)
+- 8 language README translations

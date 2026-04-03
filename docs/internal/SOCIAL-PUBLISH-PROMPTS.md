@@ -19,7 +19,7 @@ I've been building AI agents for B2B export companies for the past year. Most "A
 
 The core idea is a 7-layer context architecture. Instead of a single system prompt, the AI reads 7 Markdown files on every conversation: Identity (who am I), Soul (how I behave), Agents (full sales workflow), User (owner's ICP and products), Heartbeat (automated pipeline inspection), Memory (3-engine recall system), and Tools (CRM, channels, integrations). This gives it deep, persistent understanding of your business.
 
-It runs 10 automated cron jobs — daily pipeline reports, stalled lead detection, email follow-up sequences, AI-powered lead discovery rotating across African, Middle Eastern, SEA, and Latin American markets. Dynamic ICP scoring adjusts in real-time based on buyer behavior (fast reply +1, asks for quote +2, 7 days silent -1).
+It runs 13 automated cron jobs — daily pipeline reports, stalled lead detection, email follow-up sequences, AI-powered lead discovery rotating across African, Middle Eastern, SEA, and Latin American markets. Dynamic ICP scoring adjusts in real-time based on buyer behavior (fast reply +1, asks for quote +2, 7 days silent -1).
 
 Multi-channel orchestration across WhatsApp, Telegram, and Email. The delivery-queue skill adds human-like message pacing (3-90s delays, message splitting) so it doesn't feel like a bot. Cultural adaptation for 5 market regions. Auto-detects and responds in the customer's language.
 
@@ -51,7 +51,7 @@ So I packaged everything into one open-source template. It covers the entire pip
 
 The whole thing is configured through 7 Markdown files — no code. You describe your company, products, ICP scoring criteria, and sales workflow in plain text. The AI reads all of it on every conversation.
 
-It runs 10 automated cron jobs (pipeline reports, stalled lead detection, email follow-ups, AI lead discovery). Has 3-engine memory so it remembers customer context across sessions. Supports WhatsApp, Telegram, and Email.
+It runs 13 automated cron jobs (pipeline reports, stalled lead detection, email follow-ups, AI lead discovery). Has 3-engine memory so it remembers customer context across sessions. Supports WhatsApp, Telegram, and Email.
 
 Already battle-tested with companies selling heavy vehicles to Africa, electronics to SEA, and textiles to Europe.
 
@@ -120,7 +120,7 @@ I built a 7-layer context system where each layer is a separate Markdown file:
 - **Soul**: Personality traits, communication style, hard constraints
 - **Agents**: 10-stage sales workflow with decision trees
 - **User**: ICP scoring (5 weighted dimensions), competitor intelligence
-- **Heartbeat**: Automated pipeline inspection — 10-item checklist on every cycle
+- **Heartbeat**: Automated pipeline inspection — 13-item checklist on every cycle
 - **Memory**: 3-engine architecture (Supermemory for semantic recall, MemoryLake for session context, MemOS for cross-session patterns)
 - **Tools**: CRM commands, channel configs, web research APIs
 
@@ -128,7 +128,7 @@ The memory architecture is the interesting part. Supermemory uses vector embeddi
 
 Dynamic ICP scoring starts with 5 weighted dimensions (purchase volume 30%, product match 25%, region 20%, payment capacity 15%, decision authority 10%) and auto-adjusts based on interaction signals.
 
-10 cron jobs handle pipeline automation. The delivery-queue skill implements human-like message timing with configurable delays and quiet hours.
+13 cron jobs handle pipeline automation. The delivery-queue skill implements human-like message timing with configurable delays and quiet hours.
 
 MIT licensed: https://github.com/iPythoning/b2b-sdr-agent-template
 
@@ -181,7 +181,7 @@ The memory architecture is 3 engines deep:
 Your AI SDR remembers that Ahmed from Dubai buys 50 units/quarter and prefers WhatsApp.
 
 第 5 条：
-10 automated cron jobs run without you touching anything:
+13 automated cron jobs run without you touching anything:
 
 - Every 30 min: Gmail inbox scan
 - 9 AM: Pipeline report via WhatsApp
@@ -304,13 +304,13 @@ The core design decision was rejecting the single-prompt approach. Instead, the 
 |  SOUL.md       -> Personality, values, rules      |
 |  AGENTS.md     -> Full sales workflow (10 stages) |
 |  USER.md       -> Owner profile, ICP, scoring     |
-|  HEARTBEAT.md  -> 10-item pipeline inspection     |
+|  HEARTBEAT.md  -> 13-item pipeline inspection     |
 |  MEMORY.md     -> 3-engine memory architecture    |
 |  TOOLS.md      -> CRM, channels, integrations     |
 +--------------------------------------------------+
 |  Skills        -> Extensible capabilities         |
 |  Product KB    -> Your product catalog            |
-|  Cron Jobs     -> 10 automated scheduled tasks    |
+|  Cron Jobs     -> 13 automated scheduled tasks    |
 +--------------------------------------------------+
 |  OpenClaw Gateway (WhatsApp / Telegram / Email)   |
 +--------------------------------------------------+

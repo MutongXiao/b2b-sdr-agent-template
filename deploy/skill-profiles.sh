@@ -104,6 +104,9 @@ get_skills_for_profile() {
     social)        profile_social ;;
     full|all)      profile_full ;;
     none|skip)     echo "" ;;
-    *)             profile_b2b_trade ;;
+    *)
+      echo "⚠ Unknown skill profile '$profile', falling back to b2b_trade" >&2
+      profile_b2b_trade
+      ;;
   esac
 }

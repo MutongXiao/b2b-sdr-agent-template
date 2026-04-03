@@ -1,5 +1,9 @@
 # B2B SDR Agent Template
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Stars](https://img.shields.io/github/stars/iPythoning/b2b-sdr-agent-template)](https://github.com/iPythoning/b2b-sdr-agent-template/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/iPythoning/b2b-sdr-agent-template)](https://github.com/iPythoning/b2b-sdr-agent-template/issues)
+
 > Turn any B2B export business into an AI-powered sales machine in 5 minutes.
 
 An open-source, production-ready template for building AI Sales Development Representatives (SDRs) that handle the **full sales pipeline** — from lead capture to deal closing — across WhatsApp, Telegram, and email.
@@ -171,7 +175,7 @@ Message In ──→ L1 MemOS auto-recall (structured memory injection)
 | **Soul** | `SOUL.md` | AI personality, communication style, hard rules, growth mindset |
 | **Agents** | `AGENTS.md` | 10-stage sales workflow, BANT qualification, multi-channel orchestration |
 | **User** | `USER.md` | Owner profile, product lines, ICP scoring, competitors |
-| **Heartbeat** | `HEARTBEAT.md` | 12-item automated pipeline inspection + memory health |
+| **Heartbeat** | `HEARTBEAT.md` | 13-item automated pipeline inspection + memory health |
 | **Memory** | `MEMORY.md` | 4-layer anti-amnesia protocol (MemOS + Summary + ChromaDB + CRM) |
 | **Tools** | `TOOLS.md` | CRM commands, channel config, web research, email access |
 
@@ -338,13 +342,13 @@ To auto-enable during deploy, set `IP_ISOLATE=true` in `config.sh`.
 
 ### Managed Deployment
 
-Don't want to self-host? **[PulseAgent](https://ai.pulseagent.io)** offers fully managed B2B SDR agents with:
+Don't want to self-host? **[PulseAgent](https://pulseagent.io/app)** offers fully managed B2B SDR agents with:
 - One-click deployment
 - Dashboard & analytics
 - Multi-channel management
 - Priority support
 
-[Get Started →](https://ai.pulseagent.io)
+[Get Started →](https://pulseagent.io/app)
 
 ## Contributing
 
@@ -362,6 +366,6 @@ MIT — use it for anything.
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://ai.pulseagent.io">PulseAgent</a><br/>
+  Built with ❤️ by <a href="https://pulseagent.io/app">PulseAgent</a><br/>
   <em>Context as a Service — AI SDR for B2B Export</em>
 </p>

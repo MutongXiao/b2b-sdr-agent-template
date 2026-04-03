@@ -20,13 +20,13 @@ Construído com [OpenClaw](https://openclaw.dev), testado em batalha com empresa
 │  SOUL.md       → Personalidade, valores, regras   │
 │  AGENTS.md     → Workflow completo de vendas (10 estágios)│
 │  USER.md       → Perfil do proprietário, ICP, pontuação│
-│  HEARTBEAT.md  → Inspeção do pipeline em 10 pontos│
+│  HEARTBEAT.md  → Inspeção do pipeline em 13 pontos│
 │  MEMORY.md     → Arquitetura de memória com 3 motores│
 │  TOOLS.md      → CRM, canais, integrações         │
 ├─────────────────────────────────────────────────┤
 │  Skills        → Capacidades extensíveis          │
 │  Product KB    → Catálogo de produtos             │
-│  Cron Jobs     → 10 tarefas agendadas automáticas │
+│  Cron Jobs     → 13 tarefas agendadas automáticas │
 ├─────────────────────────────────────────────────┤
 │  OpenClaw Gateway (WhatsApp / Telegram / Email)  │
 └─────────────────────────────────────────────────┘
@@ -110,7 +110,7 @@ vim config.sh               # Preencha: IP do servidor, chave API, número Whats
 | **9. Email Outreach** | Sequências de email frio personalizadas (Dia 1/3/7/14), follow-up automático |
 | **10. Orquestração Multicanal** | Coordenação entre canais (WhatsApp + Email + Telegram), troca automática |
 
-### Agendamento Automatizado (10 Cron Jobs)
+### Agendamento Automatizado (13 Cron Jobs)
 
 | Horário | Tarefa |
 |---------|--------|
@@ -143,6 +143,31 @@ vim config.sh               # Preencha: IP do servidor, chave API, número Whats
 - **MemoryLake**: Contexto de sessão, resumos de conversas — recuperado automaticamente por conversa
 - **MemOS Cloud**: Padrões de comportamento entre sessões — capturado automaticamente
 
+### Sistema Anti-Amnésia de 4 Camadas
+
+Agentes de IA perdem contexto em conversas longas e entre sessões. Nossa **arquitetura anti-amnésia de 4 camadas** garante que seu SDR com IA nunca esqueça:
+
+```
+Mensagem recebida ──→ L1 MemOS auto-recall (injeção de memória estruturada)
+    │
+    ├──→ L3 ChromaDB armazenamento por turno (isolamento por cliente, etiquetagem automática)
+    │
+    ├──→ L2 Resumo proativo a 65% dos tokens (compressão haiku, zero perda de informação)
+    │
+    └──→ L4 Snapshot CRM diário 12:00 (fallback de recuperação de desastres)
+```
+
+| Camada | Motor | O Que Faz |
+|--------|-------|-----------|
+| **L1: MemOS** | Memória estruturada | Extrai automaticamente BANT, compromissos e objeções a cada turno. Injeta no System Prompt no início da conversa. |
+| **L2: Resumo Proativo** | Monitoramento de tokens | Comprime a 65% de uso do contexto via modelo classe haiku. Todos os números, cotações e compromissos preservados literalmente. |
+| **L3: ChromaDB** | Armazenamento vetorial por turno | Cada turno de conversa armazenado com isolamento por `customer_id`. Etiquetagem automática de cotações, compromissos e objeções. Recuperação semântica entre sessões. |
+| **L4: Snapshot CRM** | Backup diário | Armazena o estado completo do pipeline diariamente no ChromaDB como recuperação de desastres. Se qualquer camada falhar, L4 tem os dados. |
+
+**Resultado**: Seu SDR com IA lembra de cada cliente, cada cotação, cada compromisso — mesmo após 100+ turnos, semanas de silêncio ou reinicializações do sistema.
+
+> Veja **[ANTI-AMNESIA.md](./ANTI-AMNESIA.md)** para a especificação completa de implementação com código, prompts e guia de deployment.
+
 ## As 7 Camadas Explicadas
 
 | Camada | Arquivo | Propósito |
@@ -165,6 +190,8 @@ Capacidades pré-construídas que estendem seu SDR com IA:
 | **supermemory** | Motor de memória semântica. Auto-captura insights de clientes, busca em todas as conversas. |
 | **sdr-humanizer** | Regras para conversa natural — ritmo, adaptação cultural, anti-padrões. |
 | **lead-discovery** | Descoberta de leads por IA. Busca web de compradores potenciais, avaliação ICP, entrada automática no CRM. |
+| **chroma-memory** | Armazenamento de conversas por turno com isolamento de clientes, etiquetagem automática e snapshots do CRM. |
+| **telegram-toolkit** | Comandos de bot, teclados inline, manipulação de arquivos grandes e estratégias para mercados Telegram-first. |
 | **quotation-generator** | Geração automática de faturas proforma em PDF com papel timbrado da empresa, suporte multi-idioma. |
 
 ### Perfis de Skills
@@ -209,6 +236,24 @@ product-kb/
     └── generate-pi.js              # Gerador de fatura proforma
 ```
 
+## Painel de Controle
+
+Após o deployment, seu SDR com IA vem com um painel web integrado:
+
+```
+http://YOUR_SERVER_IP:18789/?token=YOUR_GATEWAY_TOKEN
+```
+
+O painel mostra:
+- Status do bot em tempo real e conexão WhatsApp
+- Histórico de mensagens e threads de conversa
+- Status de execução dos cron jobs
+- Monitoramento de saúde dos canais
+
+O token é gerado automaticamente durante o deployment e exibido na saída. Mantenha-o privado — qualquer pessoa com a URL+token tem acesso completo.
+
+> **Nota de segurança**: Defina `GATEWAY_BIND="loopback"` em config.sh para desabilitar o acesso remoto ao painel. O padrão é `"lan"` (acessível pela rede).
+
 ## Deployment
 
 ### Pré-requisitos
@@ -240,16 +285,73 @@ SHEETS_SPREADSHEET_ID="seu-id-google-sheets"
 ADMIN_PHONES="+1234567890"
 ```
 
+### Configuração do WhatsApp
+
+Por padrão, o SDR com IA aceita mensagens de **todos os contatos do WhatsApp** (`dmPolicy: "open"`). Esta é a configuração recomendada para agentes de vendas — você quer que todo cliente potencial consiga te contatar.
+
+| Configuração | Valor | Significado |
+|--------------|-------|-------------|
+| `WHATSAPP_DM_POLICY` | `"open"` (padrão) | Aceitar DMs de qualquer pessoa |
+| | `"allowlist"` | Aceitar apenas de `ADMIN_PHONES` |
+| | `"pairing"` | Requer código de pareamento primeiro |
+| `WHATSAPP_GROUP_POLICY` | `"allowlist"` (padrão) | Responder apenas em grupos da lista branca |
+
+Para alterar após o deployment, edite `~/.openclaw/openclaw.json` no servidor:
+
+```json
+{
+  "channels": {
+    "whatsapp": {
+      "dmPolicy": "open",
+      "allowFrom": ["*"]
+    }
+  }
+}
+```
+
+Depois reinicie: `systemctl --user restart openclaw-gateway`
+
+### Isolamento de IP do WhatsApp (Multi-Tenant)
+
+Ao executar múltiplos agentes no mesmo servidor, cada um deve ter um IP de saída único para que o WhatsApp veja dispositivos independentes. Isso previne o bloqueio cruzado entre contas.
+
+```bash
+# Após fazer deploy de um cliente, isolar o IP do WhatsApp dele:
+./deploy/ip-isolate.sh acme-corp
+
+# Ou com uma porta SOCKS5 específica:
+./deploy/ip-isolate.sh acme-corp 40010
+```
+
+**Como funciona:**
+
+```
+                  ┌─ wireproxy :40001 → WARP Account A → CF IP-A
+                  │    ↑
+tenant-a ─────────┘    ALL_PROXY=socks5://host:40001
+
+tenant-b ─────────┐    ALL_PROXY=socks5://host:40002
+                  │    ↓
+                  └─ wireproxy :40002 → WARP Account B → CF IP-B
+```
+
+Cada tenant recebe:
+- Uma conta dedicada gratuita do [Cloudflare WARP](https://1.1.1.1/)
+- Uma instância isolada do [wireproxy](https://github.com/pufferffish/wireproxy) (~4MB RAM)
+- Um IP de saída Cloudflare único para todo o tráfego de saída (incluindo WhatsApp)
+
+Para habilitar automaticamente durante o deploy, defina `IP_ISOLATE=true` em `config.sh`.
+
 ### Deployment Gerenciado
 
-Não quer hospedar você mesmo? **[PulseAgent](https://ai.pulseagent.io)** oferece agentes SDR B2B totalmente gerenciados com:
+Não quer hospedar você mesmo? **[PulseAgent](https://pulseagent.io/app)** oferece agentes SDR B2B totalmente gerenciados com:
 
 - Deployment com um clique
 - Dashboard & analytics
 - Gerenciamento multi-canal
 - Suporte prioritário
 
-[Comece Agora →](https://ai.pulseagent.io)
+[Comece Agora →](https://pulseagent.io/app)
 
 ## Contribuindo
 
@@ -267,6 +369,6 @@ MIT — use para qualquer coisa.
 ---
 
 <p align="center">
-  Feito com ❤️ por <a href="https://ai.pulseagent.io">PulseAgent</a><br/>
+  Feito com ❤️ por <a href="https://pulseagent.io/app">PulseAgent</a><br/>
   <em>Context as a Service — AI SDR para Exportação B2B</em>
 </p>
