@@ -1,5 +1,19 @@
 # Upstream Sync Log
 
+## 2026-04-06 — v2026.4.5 Full Sync
+- Previous release: v2026.4.2
+- New release: v2026.4.5 (2026-04-06)
+- Classification: BREAKING (legacy config aliases removed) + RELEVANT (multilingual UI, 4 new providers, WhatsApp fix, Telegram fixes, security hardening)
+- Changes adapted:
+  - CHANGELOG.md: documented breaking changes, new providers, WhatsApp/Telegram fixes, security hardening
+  - workspace/TOOLS.md: added WhatsApp `blockStreaming` note; expanded AI provider table (Qwen, MiniMax, Fireworks AI, StepFun)
+  - deploy/UPGRADE.md: added v2026.4.5 known issues and migration steps for removed legacy config aliases
+- Blog published:
+  - EN: https://pulseagent.io/en/blog/openclaw-v2026-4-5-multilingual-providers-whatsapp (postId: 411c15f4-f6f0-431a-9452-9b6dec1313db)
+  - ZH: https://pulseagent.io/blog/openclaw-v2026-4-5-multilingual-providers-whatsapp (postId: bc1fce13-9804-48b0-b291-ed03c575adea)
+- WeChat: submitted (mediaId: _GzDFbp30Jdq7P2SfOYPykCUbu4X23qptvVHwSiBAxZmxDthef7y8xb271sy04a-, publishId: 2247483699)
+- Release pointer advanced: v2026.4.2 → v2026.4.5
+
 ## 2026-04-06 — Release Check
 - Checked latest stable release: v2026.4.2
 - Last synced release: v2026.4.2
