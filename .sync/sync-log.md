@@ -1,8 +1,12 @@
 # Upstream Sync Log
 
-## 2026-04-07 — Release Check (15th run)
+## 2026-04-07 — Blog Publish v2026.4.5 (15th run)
 - Latest stable release: v2026.4.5
-- Last synced release:   v2026.4.5
+- Last synced release:   v2026.4.5 (draft existed, unpublished — published now)
+- Result: PUBLISHED (drafts were prepared but never pushed)
+- Blog EN: https://pulseagent.io/en/blog/openclaw-v2026-4-5-multilingual-providers-whatsapp (postId: 411c15f4-f6f0-431a-9452-9b6dec1313db, action: updated)
+- Blog ZH: https://pulseagent.io/blog/openclaw-v2026-4-5-multilingual-providers-whatsapp (postId: bc1fce13-9804-48b0-b291-ed03c575adea, action: updated)
+- WeChat: FAILED — WeChat API token error (40125: invalid appsecret rid: 69d485c4-1f3d7156-358a58cb) — server-side credential issue, retry manually
 - Result: NO NEW RELEASE — exiting
 
 
