@@ -1,5 +1,8 @@
 # TOOLS.md — Tool Configuration
 
+> **⚠ Security upgrade required — OpenClaw v2026.4.8+**
+> This release patches 5 security issues including cross-origin redirect secret leakage (auth tokens could leak to redirect targets), allowlist bypass under concurrent requests, and base64 payload memory exhaustion. Upgrade immediately: `npm install -g openclaw@latest` or `npx openclaw@latest upgrade`.
+
 ## CRM (Source of Truth)
 Configure based on your CRM choice: Google Sheets, Notion, Airtable, or any REST API.
 
@@ -195,6 +198,16 @@ OpenClaw supports multiple AI model providers. The recommended provider is Claud
 | xAI / Grok | openai-completions | `api.grok.x.ai` recognized as native endpoint as of v2026.4.8 |
 | Custom / self-hosted | openai-completions | Point `baseUrl` to your endpoint |
 
+**Claude thinking blocks (v2026.4.8+):** Interleaved thinking blocks are now correctly preserved and forwarded for Claude Opus 4.5+, Sonnet 4.5+, and all Claude 4-family models. Earlier versions were silently stripping thinking blocks before forwarding, causing reasoning regressions on complex SDR tasks (multi-step BANT, objection handling chains, pricing negotiations). No config change needed — works automatically after upgrade.
+
+**Claude compaction provider (v2026.4.8+):** You can now use a different (cheaper) model for session compaction without affecting your main conversation model:
+```yaml
+agents:
+  defaults:
+    compaction:
+      provider: "claude-haiku-4-5"   # fast, cheap compaction; main model unchanged
+```
+
 **Mistral-specific notes (v2026.4.8+):** `reasoning_effort` is now sent for Mistral Small 4 with thinking-level mapping. OpenClaw also correctly uses `max_tokens` (not `max_completion_tokens`) and disables unsupported params (`store`) when the provider is Mistral. These apply automatically — no manual config needed.
 
 **Memory vector recall (v2026.4.8+):** OpenClaw now shows an explicit warning when `sqlite-vec` is unavailable or writes are degraded, rather than silently falling back. If you see `[memory] sqlite-vec unavailable — vector recall disabled` in logs, install `sqlite-vec` on your server.
@@ -247,6 +260,25 @@ curl -s -X POST "http://SERVER_IP:{{gateway_port}}/webhooks/crm" \
 - Always use HTTPS in production (put gateway behind nginx + TLS)
 - The `secret` field enforces HMAC-SHA256 validation — mismatched requests are rejected
 - Gateway must be bound to `lan` (not `loopback`) to receive external webhook calls
+
+## Slack (Enterprise Channel — Corporate Buyers)
+Use Slack for enterprise accounts where buyers communicate primarily in shared Slack Connect channels.
+
+### Corporate Proxy Support (v2026.4.8+)
+Slack's Socket Mode WebSocket connections now honor ambient proxy environment variables. Required for deployments behind corporate firewalls:
+
+```bash
+# Set in your server environment or docker-compose
+export HTTPS_PROXY="http://proxy.corp.example.com:3128"
+export NO_PROXY="localhost,127.0.0.1,*.internal.corp"
+```
+
+OpenClaw picks these up automatically — no Slack-specific config required.
+
+### SecretRef Bot Tokens
+If your bot token is stored as a `SecretRef` (vault/k8s secret), token resolution is now stable across gateway restarts (`openclaw gateway restart` no longer invalidates the resolved token).
+
+---
 
 ## Graphify (Knowledge Graph — Sales Intelligence)
 Build queryable knowledge graphs from product catalogs, customer conversations, and market research.
