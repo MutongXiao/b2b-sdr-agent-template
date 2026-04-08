@@ -1,3 +1,11 @@
+## 2026-04-08 — v2026.4.8 Blog Re-publish (run #2)
+- Previous run published to slug `openclaw-v2026-4-8-security-stability` — this run publishes revised/improved post
+- EN blog: https://pulseagent.io/en/blog/openclaw-v2026-4-8-security-claude-thinking (postId: de954cdd-9298-43e3-b4a5-f4cd4589c0f3, action: created)
+- ZH blog: https://pulseagent.io/en/blog/openclaw-v2026-4-8-security-claude-thinking (postId: de954cdd-9298-43e3-b4a5-f4cd4589c0f3, action: updated)
+- WeChat: FAILED — server-side credential error (40125: invalid appsecret rid: 69d5f478-517f06f1-088a8b0b) — fix WeChat appsecret in PulseAgent dashboard
+- workspace/TOOLS.md additions: security upgrade banner, Claude thinking blocks note, compaction provider config, Slack channel section with proxy support
+- Template commit: af15f9d
+
 ## 2026-04-08 — v2026.4.8 Full Sync
 - Previous release: v2026.4.7
 - New release: v2026.4.8 (2026-04-08, released 05:14 UTC)
