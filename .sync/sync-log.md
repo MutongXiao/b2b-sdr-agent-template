@@ -1,3 +1,11 @@
+## 2026-04-09 — Release Check (run #23)
+- Latest stable release: v2026.4.9
+- Last synced release:   v2026.4.9
+- Result: NO NEW RELEASE — exiting
+- Note: WeChat error 40125 (invalid appsecret) is a recurring credential issue — fix appsecret in PulseAgent dashboard to restore WeChat publishing
+
+---
+
 ## 2026-04-09 — Release Check (run #22)
 - Latest stable release: v2026.4.9
 - Last synced release:   v2026.4.9
