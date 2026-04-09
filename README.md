@@ -4,6 +4,12 @@
 [![GitHub Stars](https://img.shields.io/github/stars/iPythoning/b2b-sdr-agent-template)](https://github.com/iPythoning/b2b-sdr-agent-template/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/iPythoning/b2b-sdr-agent-template)](https://github.com/iPythoning/b2b-sdr-agent-template/issues)
 
+<a href="https://www.producthunt.com/products/b2b-sdr-agent?embed=true&utm_source=badge-b2b-sdr-agent&utm_medium=badge&utm_source=badge-b2b-sdr-agent" target="_blank"><img src="https://ph-files.imgix.net/388786bc-d811-4059-9f0d-40d5fc49d848.png?auto=format&fit=crop&w=80&h=80" alt="PulseAgent B2B SDR Agent Skill - Product Hunt" width="80" height="80" align="left" style="margin-right:12px" /></a>
+
+**We're live on Product Hunt!** → [PulseAgent B2B SDR Agent Skill](https://www.producthunt.com/products/b2b-sdr-agent?embed=true&utm_source=embed&utm_medium=post_embed) — Open-source AI SDR for WhatsApp, Email & Telegram. An upvote means the world to us 🙏
+
+<br clear="left" />
+
 > Turn any B2B export business into an AI-powered sales machine in 5 minutes.
 
 An open-source, production-ready template for building AI Sales Development Representatives (SDRs) that handle the **full sales pipeline** — from lead capture to deal closing — across WhatsApp, Telegram, and email.
