@@ -8,6 +8,117 @@ Changes sourced from upstream (openclaw/openclaw) are labeled with the originati
 
 ## [Unreleased]
 
+## 2026-04-09 — OpenClaw v2026.4.9 upstream sync
+
+### Security (Critical — Upgrade Recommended)
+
+- **Workspace `.env` runtime-control env vars blocked** *(BREAKING)*
+  Runtime-control variables, browser-control override flags, and skip-server env vars in untrusted workspace `.env` files are now rejected at startup. If your deployment uses `.env` to override OpenClaw runtime behavior (e.g. `OPENCLAW_GATEWAY_PORT`, `OPENCLAW_SKIP_*`, `OPENCLAW_BROWSER_*`), those overrides are silently ignored in v2026.4.9. Move them into `openclaw.json` under the appropriate config keys or set them as real system environment variables before the daemon starts.
+  Upstream: v2026.4.9
+
+- **SSRF bypass via interaction-driven navigation fixed**
+  Blocked-destination safety checks are now re-run after click, evaluate, and hook-triggered navigations in the browser tool. Previously, an agent or adversarial page could bypass the SSRF quarantine by triggering a main-frame navigation through a simulated click.
+  Upstream: v2026.4.9
+
+- **Remote node exec events marked untrusted**
+  `exec.started`, `exec.finished`, and `exec.denied` summaries from remote nodes are now flagged as untrusted system events. Command/output/reason text from remote nodes is sanitized, preventing injection of trusted-System content via crafted exec summaries.
+  Upstream: v2026.4.9
+
+- **Plugin onboarding auth-choice collision prevention**
+  Untrusted workspace plugins can no longer register provider auth-choice IDs that collide with bundled provider IDs during non-interactive onboarding.
+  Upstream: v2026.4.9
+
+- **`basic-ftp` CRLF injection patched**
+  Forced `basic-ftp` to `5.2.1` which includes the upstream CRLF command-injection fix. Also bumped Hono and `@hono/node-server` in production dependency paths.
+  Upstream: v2026.4.9
+
+### New Features
+
+- **Memory & Dreaming — REM backfill lane**
+  New `rem-harness --path` flag enables historical daily-note replay into the Dreams stack without a second memory stack. Includes live short-term promotion so old diary entries can be back-filled into the agent's grounded long-term memory.
+  B2B SDR relevance: long-running SDR agents accumulating months of interaction history can now backfill older notes into Dreams for persistent lead context without restarting from scratch.
+  Upstream: v2026.4.9
+
+- **Structured diary view**
+  Diary now shows a timeline with backfill/reset controls, traceable dreaming summaries, and a grounded Scene lane with promotion hints. Useful for auditing what your agent "remembers" about a lead over time.
+  Upstream: v2026.4.9
+
+- **Provider auth aliases (`providerAuthAliases`)**
+  Provider manifests now support `providerAuthAliases`, enabling provider variants to share environment variables, auth profiles, config-backed authentication, and API-key onboarding — without core-specific integration per variant. Reduces duplication when configuring multiple OpenAI-compatible or Anthropic-compatible endpoints.
+  Upstream: v2026.4.9
+
+### Fixed
+
+#### Session & Routing
+- **Telegram/Discord route preservation on multi-session announce**
+  `sessions_send` follow-up messages no longer hijack delivery from established Telegram or Discord external routes. Previously, inter-session announce traffic could re-route a reply that should have gone to a customer's Telegram thread back through an internal channel.
+  Upstream: v2026.4.9
+
+- **`/reset` and `/new` clear auto-fallback model overrides**
+  Auto-pinned model overrides from fallback chains are cleared on `/reset` and `/new`. Explicit user model selections are preserved. Legacy sessions created before override-source tracking are also retroactively handled.
+  Upstream: v2026.4.9
+
+- **Session history guard on fast session switches**
+  Stale session-history reloads during rapid session switches are now guarded, preventing a mismatch between the selected session and the rendered transcript.
+  Upstream: v2026.4.9
+
+#### Channels
+- **Slack: bearer auth preserved across same-origin `files.slack.com` redirects**
+  `url_private_download` image attachments now load correctly. The fix preserves bearer auth on same-origin Slack CDN redirects while still stripping it on cross-origin hops (security behavior maintained).
+  Upstream: v2026.4.9
+
+- **Slack: ACP block replies treated as delivered output**
+  Slack ACP block replies no longer trigger a second fallback-text send. Previously, the agent would send duplicate plain-text replies after Slack already rendered the block.
+  Upstream: v2026.4.9
+
+- **Slack: partial-streaming final-answer suppression fixed**
+  Stale preview text from a failed stream finalization no longer suppresses the final answer in Slack channels.
+  Upstream: v2026.4.9
+
+- **Chat control token leakage suppressed**
+  Internal `ANNOUNCE_SKIP` / `REPLY_SKIP` tokens no longer appear in user-facing Slack, Telegram, or Discord messages, either live or in history sanitization.
+  Upstream: v2026.4.9
+
+- **Auto-reply: `NO_REPLY` sentinel stripping**
+  Leading `NO_REPLY` tokens are stripped before reply normalization and ACP-visible streaming. Substantive `NO_REPLY …` text (e.g. where the phrase appears in a customer message) is preserved.
+  Upstream: v2026.4.9
+
+- **Matrix: wait for sync readiness before startup success**
+  The gateway now waits for Matrix sync to be ready before marking startup as complete. Matrix background handler failures are contained; fatal Matrix sync stops route through channel-level restart handling instead of crashing the gateway.
+  Upstream: v2026.4.9
+
+- **Matrix doctor: legacy DM policy migration**
+  `openclaw doctor --fix` migrates `channels.matrix.dm.policy: "trusted"` to compatible `allowlist`-based DM policies, preserving explicit `allowFrom` boundaries. Empty legacy configs default to `pairing`.
+  Upstream: v2026.4.9
+
+#### Providers & Models
+- **OpenAI: reasoning effort defaults to `high`**
+  When no `reasoning_effort` is specified, OpenAI Responses, WebSocket, and compatible completions transports now default to `high`. Per-run explicit reasoning levels are still honored. Monitor token usage if you rely on the previous behavior (which was no reasoning effort sent).
+  Upstream: v2026.4.9
+
+- **Ollama: thinking output when `/think` is active**
+  Ollama models using the native `api: "ollama"` path now display thinking output when `/think` is set to a non-off level. Useful for local model deployments with reasoning models.
+  Upstream: v2026.4.9
+
+- **OpenRouter: provider-qualified model refs preserved**
+  Model IDs containing slashes (e.g. `anthropic/claude-3-5-sonnet`) are now submitted with the `openrouter/` prefix intact so they remain allowlist-compatible.
+  Upstream: v2026.4.9
+
+- **Z.ai error classification**
+  Z.ai vendor codes `1311` (billing) and `1113` (auth) — including long wrapped `1311` payloads — are now correctly classified instead of falling through to generic failover handling.
+  Upstream: v2026.4.9
+
+#### Agent Runtime
+- **Agent timeout inherits `agents.defaults.timeoutSeconds`**
+  LLM idle timeout now inherits `agents.defaults.timeoutSeconds` when configured. The unconfigured idle watchdog is disabled for cron runs. Idle-timeout errors now point at `agents.defaults.llm.idleTimeoutSeconds` for accurate config guidance. This matters for long-running SDR cron agents that were hitting spurious idle timeouts.
+  Upstream: v2026.4.9
+
+- **Reply preflight uses active runtime snapshot**
+  Queued reply runs now use the active runtime snapshot; `SecretRef`s are resolved before preflight helpers run. Gateway OAuth reauth failures are surfaced to users with exact `openclaw doctor` reauth commands.
+  Upstream: v2026.4.9
+
+---
+
 ## 2026-04-08 — OpenClaw v2026.4.8 upstream sync
 
 ### Security (Critical — Upgrade Recommended)

@@ -80,6 +80,18 @@ openclaw gateway restart
 
 ## Known Issues by Version
 
+### 2026.4.9
+
+**Breaking change: workspace `.env` runtime-control env vars blocked.**
+
+| Issue / Change | Symptom | Fix |
+|----------------|---------|-----|
+| Workspace `.env` runtime-control vars silently ignored | Config overrides via `.env` (e.g. `OPENCLAW_GATEWAY_PORT`, `OPENCLAW_SKIP_*`, `OPENCLAW_BROWSER_*`) have no effect after upgrade | Move these vars to system environment (set before daemon start) or to `openclaw.json` under the matching config keys |
+| SSRF quarantine bypass fixed | Agents or malicious pages could bypass blocked-destination checks via simulated click navigation | No action needed — fixed automatically |
+| OpenAI reasoning effort defaults to `high` | OpenAI users on Responses/WebSocket/completions may see higher token usage | Set `reasoningEffort: "medium"` or `"low"` explicitly if cost is a concern |
+| Ollama thinking output | Ollama models now emit thinking when `/think` is active | Opt out by keeping `/think` at off level |
+| Matrix `dm.policy: "trusted"` migrated | `openclaw doctor --fix` will convert legacy Matrix DM policy to `allowlist` form | Run `openclaw doctor` after upgrade to review proposed changes before applying |
+
 ### 2026.4.8
 
 **No breaking changes.** Upgrade is safe — fixes only.

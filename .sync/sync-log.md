@@ -1,3 +1,18 @@
+## 2026-04-09 — v2026.4.9 Full Sync
+
+- New release: v2026.4.9 (2026-04-09, released 02:25 UTC)
+- Previous synced release: v2026.4.8
+- Categorization: BREAKING (workspace .env runtime-control vars blocked) + RELEVANT (SSRF browser bypass fix, exec event injection fix, plugin collision fix, basic-ftp CRLF fix, Memory REM backfill, Telegram session routing fix, OpenAI reasoning effort default high, agent cron timeout fix, Slack bearer/ACP/streaming fixes)
+- Template changes:
+  - CHANGELOG.md: added v2026.4.9 section (security, breaking change, new features, fixes)
+  - workspace/TOOLS.md: updated security banner to v2026.4.9; added breaking .env var note; added OpenAI reasoning effort default, Ollama thinking, OpenRouter prefix, agent timeout, provider auth aliases notes; added Telegram session routing fix note
+  - deploy/UPGRADE.md: added v2026.4.9 known issues table with breaking change migration
+- Blog published:
+  - EN: https://pulseagent.io/en/blog/openclaw-v2026-4-9-security-sessions-memory (postId: c3e559d1-7ac2-48e3-8bd9-44c261141a26, action: created)
+  - ZH: https://pulseagent.io/en/blog/openclaw-v2026-4-9-security-sessions-memory (postId: c3e559d1-7ac2-48e3-8bd9-44c261141a26, action: updated)
+- WeChat: ERROR — WeChat API error: invalid appsecret (40125, rid: 69d71c71-627586a4-4f3ed687) — recurring issue, fix WeChat appsecret in PulseAgent dashboard
+- Release pointer: v2026.4.8 → v2026.4.9
+
 ## 2026-04-09 — Release Check (run #19)
 - Latest stable release: v2026.4.8
 - Last synced release:   v2026.4.8

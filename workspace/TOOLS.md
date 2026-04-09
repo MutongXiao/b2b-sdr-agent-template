@@ -1,7 +1,9 @@
 # TOOLS.md — Tool Configuration
 
-> **⚠ Security upgrade required — OpenClaw v2026.4.8+**
-> This release patches 5 security issues including cross-origin redirect secret leakage (auth tokens could leak to redirect targets), allowlist bypass under concurrent requests, and base64 payload memory exhaustion. Upgrade immediately: `npm install -g openclaw@latest` or `npx openclaw@latest upgrade`.
+> **⚠ Security upgrade required — OpenClaw v2026.4.9+**
+> This release patches 5 security issues: SSRF bypass via interaction-driven browser navigation, workspace `.env` runtime-control env var injection (now blocked), remote node exec event injection, plugin onboarding auth-choice collision, and `basic-ftp` CRLF injection. Upgrade immediately: `npm install -g openclaw@latest` or `npx openclaw@latest upgrade`.
+>
+> **Breaking env var change (v2026.4.9):** Runtime-control, browser-control override, and skip-server env vars set in workspace `.env` files are now silently ignored. If your deploy scripts inject these via `.env`, move them to system environment or `openclaw.json` before upgrading.
 
 ## CRM (Source of Truth)
 Configure based on your CRM choice: Google Sheets, Notion, Airtable, or any REST API.
@@ -85,6 +87,8 @@ channels:
 ```
 
 Account-level `actions` fully override the top-level defaults for that account — they do not merge. Verify your per-account gates during setup.
+
+> **Session routing fix (v2026.4.9+):** `sessions_send` follow-up messages no longer hijack delivery from established Telegram (or Discord) external routes. In earlier versions, inter-session announce traffic could re-route a reply that should have gone to a customer's Telegram thread through an internal channel. Upgrade to v2026.4.9 if you use multi-session SDR flows and experienced mis-routed Telegram replies.
 
 ### Bot Commands (auto-registered)
 | Command | Action |
@@ -215,6 +219,29 @@ agents:
 **Web Fetch (v2026.4.8+):** HTTP/2 is now explicitly disabled for undici 8.0 compatibility. If you run Node 22+ and experienced web-fetch failures in v2026.4.7, upgrade to v2026.4.8.
 
 **Exa Search:** Now visible in the onboarding and provider pickers — it was previously hidden from the setup UI despite being a supported search provider.
+
+**OpenAI reasoning effort default `high` (v2026.4.9+):** When no `reasoning_effort` is set, OpenAI Responses, WebSocket, and compatible completions transports now default to `high`. This increases token consumption for OpenAI users who previously relied on the implicit no-effort default. Set explicitly if needed:
+```yaml
+model:
+  id: "o3"
+  provider: "openai"
+  reasoningEffort: "medium"   # override if "high" is too expensive
+```
+
+**Ollama thinking output (v2026.4.9+):** Ollama models using `api: "ollama"` now display thinking output when `/think` is set to a non-off level. Useful for local reasoning-model deployments where you want to inspect chain-of-thought.
+
+**OpenRouter model refs (v2026.4.9+):** Provider-qualified model IDs containing slashes (e.g. `anthropic/claude-3-5-sonnet`) now correctly preserve the `openrouter/` prefix when submitted. Previously, picker selections would drop the prefix and fail allowlist validation.
+
+**Provider auth aliases (v2026.4.9+):** Provider manifests now support `providerAuthAliases`, allowing provider variants to share a single set of environment variables and auth profiles. Useful when running multiple OpenAI-compatible or Anthropic-compatible endpoints (e.g., Azure + OpenAI, or multiple Ollama instances) without duplicating credentials.
+
+**Agent timeout inheritance (v2026.4.9+):** LLM idle timeout now inherits `agents.defaults.timeoutSeconds` when configured. The idle watchdog is disabled for cron runs to prevent spurious timeout kills on long-processing SDR cron jobs. If your cron SDR agent was dying mid-task with "idle timeout" errors, configure:
+```yaml
+agents:
+  defaults:
+    timeoutSeconds: 300          # global task timeout
+    llm:
+      idleTimeoutSeconds: 120    # per-turn LLM idle limit (set explicitly to override inherited)
+```
 
 Set your model in the OpenClaw workspace config:
 ```yaml
