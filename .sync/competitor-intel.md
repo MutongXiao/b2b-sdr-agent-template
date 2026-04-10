@@ -1,3 +1,52 @@
+# Competitor Intel — 2026-04-10
+
+## Changes Detected
+
+- **Salesforge**: Apr 10 post "Claude Code for Sales: 4 Outbound Workflows That Replace Hours of Manual Work" — announces **Salesforge MCP** integration covering prospecting, infrastructure, warmup, and sequencing via Claude Code. Three additional Apr 9 posts: AI video integration (Weezly partnership), 100+ user review analysis benchmarking vs Lemlist/Apollo, and white-label agency positioning content.
+- **Instantly.ai**: Broke 10-day silence with 6 posts published Apr 9 — all targeting "email tracking" keyword cluster (Gmail, Outlook, glossary, ROI calculator, free vs paid, warmup vs tracking). No product announcements — pure SEO burst.
+- **Smartlead**: Apr 9 post "Email Warmup Failure: What Silent Problems Look Like and How to Catch Them Early" — one-post day, deliverability focus (not MCP). MCP content cadence may be tapering slightly.
+- **Reachy.ai**: Blog 404 confirmed — day 4. No redirect, no announcement.
+- **Apollo.io**: No new content since Apr 9 check. Unchanged.
+- **OpenClaw**: No new releases since v2026.4.9 (Apr 9). Unchanged.
+
+---
+
+## Analysis
+
+**Salesforge just entered the MCP+Claude arena.** The Apr 10 "Claude Code for Sales" post is not a blog experiment — it names Salesforge MCP explicitly and maps it to four concrete workflows (prospecting, infrastructure warmup, sequencing). Smartlead has been building this narrative since Apr 1. Salesforge just validated it with a second major competitor. The "agentic outbound via Claude MCP" position is now being occupied by two well-funded tools. PulseAgent, which is *built* on OpenClaw (Claude-native architecture), has zero published presence in this conversation. This is the most urgent content gap in the competitive landscape.
+
+**Salesforge is also expanding in three other directions simultaneously:** AI video personalization (Weezly integration adds multimedia to sequences), white-label agency packaging (signals they're building a reseller channel), and self-benchmarking content (the 100-review analysis positions them favorably against Lemlist and Apollo for mid-market teams). Three simultaneous expansion vectors in one day indicates a coordinated content/product push — possibly timed ahead of a pricing or GTM announcement.
+
+**Instantly.ai's email tracking cluster is an SEO land-grab, not a product signal.** Six posts in one day, all from the same author (Hans Dekker), all on email tracking subthemes — this is a programmatic content batch. It signals Instantly is targeting a new traffic segment (email tracking buyers) rather than deepening outbound sequencing features. The 10-day silence before this batch likely reflects editorial scheduling, not product pause. However, the pivot toward tracking/deliverability content — rather than sequencing or AI SDR — suggests they may be repositioning slightly away from direct PulseAgent territory.
+
+**Smartlead's one-post day on warmup failure is a minor cadence shift.** After six MCP posts in three weeks, pivoting to email deliverability basics may indicate they're widening their SEO net rather than doubling down on MCP. Or the MCP series is complete and they're moving to the next cluster. Monitor next 3 days.
+
+**Reachy.ai: Day 4 of 404.** No recovery signal. The capture window for their displaced customers is closing — first-mover advantage in outreach sequences degrades daily as competitors also notice and target them.
+
+**Manufacturing/export market:** Still uncovered by any competitor across all sources checked today.
+
+---
+
+## Action Items for PulseAgent
+
+- **CRITICAL: Publish MCP+Claude content today** — Salesforge and Smartlead both now own "agentic outbound + Claude Code." PulseAgent's OpenClaw foundation makes this the strongest possible counter-narrative. A post like "How PulseAgent's OpenClaw Architecture Delivers Claude-Native SDR for Manufacturing" is a direct differentiator neither competitor can replicate.
+- **Activate Reachy.ai sequence immediately** — Day 4 is the last day for first-mover advantage. Pull Reachy users from G2/LinkedIn/ProductHunt and launch a 3-step sequence today.
+- **Watch Salesforge for pricing/GTM announcement** — three simultaneous content vectors (MCP, video, white-label) in one day is unusual. Flag their pricing page and LinkedIn for the next 48 hours.
+- **Ignore Instantly's email tracking cluster** — it's an SEO play in an adjacent segment, not a competitive threat to outbound sequencing.
+- **Benchmark Salesforge MCP vs PulseAgent** — read the "Claude Code for Sales" post in full; identify workflow gaps PulseAgent covers that Salesforge MCP doesn't (e.g., WhatsApp, manufacturing-specific data sources).
+
+---
+
+## Metadata
+
+- **Last checked**: 2026-04-10
+- **Next check**: 2026-04-11
+- **Sources**: apollo.io/blog, instantly.ai/blog, smartlead.ai/blog, salesforge.ai/blog, reachy.ai/blog (404), github.com/openclaw/openclaw/releases
+
+---
+
+---
+
 # Competitor Intel — 2026-04-09
 
 ## Changes Detected
