@@ -1,3 +1,56 @@
+# Competitor Intel — 2026-04-12
+
+## Changes Detected
+
+- **OpenClaw**: v2026.4.11 released Apr 12 — **ChatGPT import ingestion** (new `Imported Insights` + `Memory Palace` diary subtabs), structured chat bubbles for assistant media/voice directives, video generation asset delivery + aspect-ratio improvements, Feishu/Teams reaction support, Ollama metadata caching; fixes: OAuth scope rewriting, audio transcription across providers, macOS Talk Mode microphone permissions, **WhatsApp account configuration bugs**.
+- **Apollo.io**: Possible new post "Revenue Efficiency Metrics: A CFO Evaluation Framework" (date unverifiable — absent from Apr 11 report, present today; Apollo blog does not expose publish dates in HTML).
+- **Instantly.ai**: No new content. Last posts Apr 9. Third consecutive no-post day.
+- **Smartlead**: No new content. Last posts Apr 10.
+- **Salesforge**: No new content. Last posts Apr 10.
+- **Reachy.ai**: Blog 404 confirmed — day 6. No recovery signal.
+
+---
+
+## Analysis
+
+**OpenClaw v2026.4.11 has three direct PulseAgent implications.**
+
+1. **ChatGPT import ingestion** is the most strategically interesting addition. Users can now migrate their ChatGPT conversation history into OpenClaw's `Memory Palace` and `Imported Insights` diary subtabs. For PulseAgent, this is a prospecting signal: any prospect who has been experimenting with ChatGPT for sales research or outreach drafting is now one step closer to a Claude/OpenClaw-native workflow. PulseAgent can position itself as the natural upgrade — from ad-hoc ChatGPT SDR experiments to a purpose-built, memory-persistent agent.
+
+2. **WhatsApp account configuration bug fix** is the second consecutive WhatsApp reliability fix (after the reconnection fix in v2026.4.10). Two releases in a row fixing WhatsApp issues confirms OpenClaw is investing in channel stability here, which is directly protective of PulseAgent's core go-to-market channel. Upgrade immediately to clear both issues.
+
+3. **Video generation aspect-ratio + asset delivery improvements** extend the Seedance 2.0 capability from v2026.4.10. PulseAgent's native video-personalized outreach story gets stronger with each release cycle. Salesforge still relies on a Weezly integration; OpenClaw's native video tooling is widening that gap.
+
+**Competitor content silence on a Saturday confirms a weekly cadence pattern.** Salesforge, Smartlead, and Instantly have all published nothing today. The week's cadence shows Mon–Fri activity with weekend drops. PulseAgent can exploit this window: publishing intelligence or feature content on weekends faces less noise from competitors and can capture weekend researchers who are doing vendor evaluation outside work hours.
+
+**Apollo's possible new CFO-targeting piece** ("Revenue Efficiency Metrics: A CFO Evaluation Framework") continues their systematic upmarket push (C-suite GTM post Apr 9, Data Quality Report Apr 9, CFO framework Apr 12). If confirmed as newly published, this is three consecutive weeks of executive-layer content from Apollo. They are building a narrative for budget owners, not just practitioners. PulseAgent needs at least one CFO/VP-of-Sales-facing asset before Q2 ends or Apollo will own that conversation in manufacturing/export too.
+
+**Reachy.ai: Day 6.** The first-mover window for capturing their user base is effectively closing. Competitors who haven't launched displacement sequences by now will face incumbents who did.
+
+**Manufacturing/export market**: Still uncovered by all competitors. All competitor content this week is horizontal (agency scale, deliverability, CFO frameworks). The vertical lane remains open.
+
+---
+
+## Action Items for PulseAgent
+
+- **Upgrade to OpenClaw v2026.4.11 today** — WhatsApp config bug fix is production-critical; Auth (OAuth scope rewriting) and audio transcription fixes may also affect live agent sessions.
+- **Build a "from ChatGPT to PulseAgent" migration narrative** — OpenClaw's ChatGPT import feature is a natural hook for prospects who've been DIY-ing with ChatGPT. A landing page or sequence targeting "using ChatGPT for sales outreach" searchers could convert warm leads already primed for an agent-based approach.
+- **Publish weekend content this weekend** — competitors are silent on weekends. One well-targeted post (e.g., manufacturing vertical outreach benchmark, or a WhatsApp-first SDR teardown) published today or tomorrow captures weekend researchers with zero competitive noise.
+- **Draft one CFO/VP-Sales asset** — Apollo is building toward budget-owner influence with CFO frameworks and data quality reports. PulseAgent needs a counter-asset: a vertical ROI model or "cost-per-meeting in manufacturing" benchmark that finance buyers can use. One well-structured asset outweighs three blog posts.
+- **Launch Reachy.ai displacement sequence now or close the window** — day 6 is the last realistic first-mover moment before competitors lock up former Reachy users on annual contracts.
+
+---
+
+## Metadata
+
+- **Last checked**: 2026-04-12
+- **Next check**: 2026-04-13
+- **Sources**: apollo.io/blog, instantly.ai/blog, smartlead.ai/blog, salesforge.ai/blog, reachy.ai/blog (404), github.com/openclaw/openclaw/releases
+
+---
+
+---
+
 # Competitor Intel — 2026-04-11
 
 ## Changes Detected
