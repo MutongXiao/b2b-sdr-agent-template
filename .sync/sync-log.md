@@ -1,3 +1,11 @@
+## 2026-04-12 — WeChat Retry (run #88)
+- Latest stable release: v2026.4.11
+- Last synced release:   v2026.4.11 (blogs published by prior session)
+- Result: NO NEW RELEASE — retrying WeChat only
+- WeChat retry (v2026.4.11): FAILED — `WeChat API error: 40125 invalid appsecret` (rid: 69db3e39-0724e34a-00823a13) — **5th consecutive 40125 failure; action required: update WeChat appsecret in PulseAgent platform settings** — ZH draft available at `.sync/blog-drafts/openclaw-v2026.4.11-zh.md`
+
+---
+
 ## 2026-04-12 — No New Release (run #87)
 - Latest stable release: v2026.4.11
 - Last synced release:   v2026.4.11
