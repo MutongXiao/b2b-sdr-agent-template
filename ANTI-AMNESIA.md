@@ -1,6 +1,17 @@
-# Anti-Amnesia Implementation Spec v2.0
+# Anti-Amnesia Implementation Spec v2.1
 # PulseAgent x OpenClaw B2B SDR Digital Worker
-# Version: v2.0 | 2026-03-30
+# Version: v2.1 | 2026-04-13 (updated for OpenClaw v2026.4.12)
+
+---
+
+> **OpenClaw v2026.4.12+ — Active Memory Plugin (New Native Option)**
+>
+> OpenClaw v2026.4.12 ships a built-in **Active Memory plugin** (`plugins.active-memory`) that runs a dedicated recall sub-agent automatically before every agent reply. For new deployments on v2026.4.12+, Active Memory can serve as a lightweight **Layer 1.5** — providing automatic context recall (preferences, past commitments, objections) without any MemOS integration overhead.
+>
+> **Recommendation:** Enable Active Memory as your baseline recall layer, then layer MemOS on top for structured CRM-grade memory with full schema control (BANT, stage, commitment tracking). The two work together: Active Memory pulls context from MemOS-persisted notes and the Memory Wiki during its pre-reply sweep.
+>
+> Enable with: `openclaw config set plugins.active-memory.enabled true`
+> Docs: https://docs.openclaw.ai/concepts/active-memory
 
 ---
 
