@@ -1,3 +1,11 @@
+## 2026-04-13 — No New Release + WeChat Retry (run #116)
+- Latest stable release: v2026.4.11
+- Last synced release:   v2026.4.12
+- Result: NO NEW RELEASE — exiting (v2026.4.12 already synced in run #114; v2026.4.12-beta.1 is prerelease — skipped)
+- WeChat retry (v2026.4.12): FAILED ❌ — `HTTP 403 / Cloudflare error 1010` (IP/browser-signature block on API endpoint) — **ACTION REQUIRED: check PulseAgent API gateway / Cloudflare rules; ZH draft at `.sync/blog-drafts/openclaw-v2026.4.12-zh.md`; blog live at https://pulseagent.io/en/blog/openclaw-v2026-4-12-active-memory-lm-studio-zh**
+
+---
+
 ## 2026-04-13 — No New Release + WeChat Retry (run #115)
 - Latest stable release: v2026.4.11
 - Last synced release:   v2026.4.12
