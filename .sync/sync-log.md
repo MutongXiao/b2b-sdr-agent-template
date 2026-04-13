@@ -1,3 +1,15 @@
+## 2026-04-13 — FULL SYNC: v2026.4.11 → v2026.4.12 (run #114)
+- Previous tracked release: v2026.4.11
+- Latest stable release:    v2026.4.12 (published 2026-04-13)
+- Result: NEW RELEASE ✅
+- Template: ANTI-AMNESIA.md bumped to v2.1 — Active Memory plugin (L1.5 callout)
+- Blog EN: published ✅ — https://pulseagent.io/en/blog/openclaw-v2026-4-12-active-memory-lm-studio (postId: 81294ca7-eecc-43a1-b8b9-b2747feec59b)
+- Blog ZH: published ✅ — https://pulseagent.io/en/blog/openclaw-v2026-4-12-active-memory-lm-studio-zh (postId: a10240b7-2c23-4935-afb3-94feab707939)
+- WeChat: FAILED ❌ — `WeChat API error: 40125 invalid appsecret` (rid: 69dcb239-099a15e8-56a22213) — **ACTION REQUIRED: refresh WeChat appsecret in PulseAgent platform settings**
+- Key changes: Active Memory plugin, LM Studio provider, Codex provider, 3 security CVEs (interpreter injection / approval auth bypass / shell-wrapper injection), WhatsApp media fallback, drop-proof orphaned messages, WebSocket keepalive
+
+---
+
 ## 2026-04-13 — No New Release (run #113)
 - Latest stable release: v2026.4.11
 - Last synced release:   v2026.4.11
