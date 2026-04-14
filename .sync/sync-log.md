@@ -1,3 +1,11 @@
+## 2026-04-14 — No New Release + WeChat Retry (run #147)
+- Latest stable release: v2026.4.14
+- Last synced release:   v2026.4.14
+- Result: NO NEW RELEASE — blogs already published (runs #144, #146)
+- WeChat retry (v2026.4.14): FAILED ❌ — `WeChat API error: 40125 invalid appsecret` (rid: 69de6772-3acd2c29-6490a357) — **persistent since run #83; ACTION REQUIRED: refresh WeChat appsecret in PulseAgent platform settings** — ZH draft saved at `.sync/blog-drafts/openclaw-v2026.4.14-zh.md`; ZH blog live at https://pulseagent.io/blog/openclaw-v2026-4-14-gpt5-active-memory-teams-zh
+
+---
+
 ## 2026-04-14 — New Release v2026.4.14 (run #146)
 - Previous tracked release on main: v2026.4.9 (local main was stale; origin/main was at v2026.4.14 via detached-HEAD runs #83–#145)
 - New stable release: v2026.4.14 (published 2026-04-14T13:03:29Z)
