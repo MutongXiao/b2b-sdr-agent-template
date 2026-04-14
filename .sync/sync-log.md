@@ -1,3 +1,11 @@
+## 2026-04-14 — No New Release + WeChat Retry (run #135)
+- Latest stable release: v2026.4.12
+- Last synced release:   v2026.4.12
+- Result: NO NEW RELEASE — exiting (v2026.4.12 already synced in run #114); next pre-release v2026.4.14-beta.1 skipped
+- WeChat retry (v2026.4.12): FAILED ❌ — `WeChat API error: 40125 invalid appsecret` (rid: 69ddc0a7-59a3f7c2-4ecc33ff) — **ACTION REQUIRED: refresh WeChat appsecret in PulseAgent platform settings; 22nd consecutive failure for v2026.4.12 (runs #114–#135); appsecret credential is invalid — Cloudflare WAF cleared; ZH draft at `.sync/blog-drafts/openclaw-v2026.4.12-zh.md`; blog live at https://pulseagent.io/en/blog/openclaw-v2026-4-12-active-memory-lm-studio-zh**
+
+---
+
 ## 2026-04-14 — No New Release + WeChat Retry (run #134)
 - Latest stable release: v2026.4.12
 - Last synced release:   v2026.4.12
