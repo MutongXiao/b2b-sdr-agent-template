@@ -1,3 +1,51 @@
+# Competitor Intel — 2026-04-19
+
+## Changes Detected
+
+- **OpenClaw**: v2026.4.19-beta.1 (Apr 19) — agent/channel routing fixes for cross-agent spawns, Telegram callback improvements (prevents update watermark issues), browser CDP profile host selection without widening SSRF policy, Codex context usage reporting corrections, Windows browser startup failure diagnostics.
+- **Apollo.io**: 2 new posts — **"How Gumloop Gives Non-Technical Teams 30-Second Answers with Apollo"** (AI and Automation) and **"6 Winning Cold Calling Scripts that Actually Book Meetings"** (Selling Skills). The Gumloop post continues the "Apollo as AI workflow infrastructure" pattern established with the HubSpot Breeze integration last report.
+- **Instantly.ai**: No new posts since Apr 13. Day 6 of silence.
+- **Smartlead**: No new posts since Apr 16. Two-day gap.
+- **Salesforge**: No new posts since Apr 16. Two-day gap.
+- **Reachy.ai**: Blog 404 — day 13. No recovery signal.
+
+---
+
+## Analysis
+
+**OpenClaw v2026.4.19-beta.1's cross-agent spawn routing fixes are the highest-priority item for PulseAgent today.** Multi-agent architectures — where a coordinator agent spawns sub-agents for research, enrichment, or sequencing — are increasingly central to complex outreach workflows. Routing bugs in cross-agent spawns could silently corrupt message attribution or drop context between agents in a live sequence. If PulseAgent's architecture uses any nested agent patterns (e.g., a research sub-agent feeding a personalization agent), this fix is production-relevant. Track for stable promotion in 1–2 days; the CDP SSRF hardening is also a security improvement worth not skipping.
+
+**Apollo's Gumloop integration post extends their AI workflow infrastructure narrative into a third platform in one week.** The pattern is now clear: HubSpot Breeze (Apr 16) → Gumloop (Apr 19). Apollo is embedding their 230M+ contact database into every major AI workflow orchestration tool. Gumloop targets non-technical operators building AI automations without code — a segment that overlaps with PulseAgent's mid-market manufacturing ICP. If a Gumloop-native buyer can now prospect using Apollo data without leaving their existing workflow tool, PulseAgent faces a "why add another tool?" objection in that segment. The counter remains the same: Gumloop+Apollo cannot handle WhatsApp, local-language outreach, or manufacturing-specific vertical data. But the objection is now sharper and will need a rehearsed response.
+
+**The cold calling scripts post from Apollo is standard playbook content** — no strategic signal, but it confirms they are publishing 2–3 posts per week consistently. Their SEO compound effect continues to build unopposed in manufacturing buyer-persona searches.
+
+**Two-day content gap across Instantly, Smartlead, and Salesforge** suggests a weekend cadence drop consistent with prior patterns. No signal of product pauses or changes in strategy.
+
+**Reachy.ai day 13.** The organic SEO window for "Reachy alternative" content remains the only live play. The first-mover outreach window has been closed for over a week.
+
+**Manufacturing/export market**: Still uncovered by all competitors across all sources. Day 13 of zero vertical-specific content from any competitor.
+
+---
+
+## Action Items for PulseAgent
+
+- **Track OpenClaw v2026.4.19-beta.1 for stable promotion** — cross-agent spawn routing fixes and CDP SSRF hardening are both production-relevant. Upgrade as soon as stable lands (expect 1–2 days). If PulseAgent uses nested agents, prioritize this upgrade above normal cadence.
+- **Prepare a "PulseAgent vs. Gumloop+Apollo" objection response** — Apollo is now embedded in HubSpot and Gumloop. Any prospect using either tool will ask "why not just use Apollo through my existing tool?" Draft a one-paragraph response focused on: WhatsApp channel, local-language outreach, manufacturing vertical data depth, and on-premises deployment. This objection will become the most common in demos within 2 weeks.
+- **Publish the Reachy.ai alternative page** — day 13, organic window still open, still a 2-hour task. This item has been on the list since day 10. Execute or close the loop.
+- **Hold on Salesforge/Smartlead MCP counter-content** — no new MCP posts from either since Apr 16. Their cadence has paused. Use the gap to publish PulseAgent's manufacturing-specific MCP content without competing noise.
+
+---
+
+## Metadata
+
+- **Last checked**: 2026-04-19
+- **Next check**: 2026-04-20
+- **Sources**: apollo.io/blog (2 new posts confirmed), instantly.ai/blog (no new posts since Apr 13), smartlead.ai/blog (no new posts since Apr 16), salesforge.ai/blog (no new posts since Apr 16), reachy.ai/blog (404, day 13), github.com/openclaw/openclaw/releases (v2026.4.19-beta.1 Apr 19 confirmed)
+
+---
+
+---
+
 # Competitor Intel — 2026-04-17
 
 ## Changes Detected
