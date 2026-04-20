@@ -1,3 +1,50 @@
+# Competitor Intel — 2026-04-20
+
+## Changes Detected
+
+- **OpenClaw**: v2026.4.19-beta.2 (Apr 19, 05:55 UTC) — **nested agent work now scoped per session**, preventing one session's sub-agent activity from blocking unrelated gateway sessions; OpenAI completions consistently report actual context usage via `stream_options.include_usage` on streaming requests; session token totals preserved for providers that omit usage metadata.
+- **Apollo.io**: No new posts confirmed. Visible posts (HubSpot Breeze, Claude integration, Clay, Customer Success Directors) are all previously captured. Apollo blog does not expose publish dates; no new title detected beyond yesterday's Gumloop post.
+- **Instantly.ai**: No new posts since Apr 13. Day 7 of silence.
+- **Smartlead**: No new posts since Apr 16. Day 4 of silence.
+- **Salesforge**: No new posts since Apr 16. Day 4 of silence.
+- **Reachy.ai**: Blog 404 — day 14. No recovery signal.
+
+---
+
+## Analysis
+
+**OpenClaw v2026.4.19-beta.2's session isolation fix for nested agents is the only substantive change today, and it matters for production stability.** The prior beta.1 fixed cross-agent spawn routing (how sub-agents are dispatched with correct channel bindings). Beta.2 goes a step further: nested agent work is now scoped per session, so if one outreach session's sub-agent stalls or errors, it cannot block processing in unrelated sessions across the gateway. For PulseAgent running multiple concurrent sequences — each potentially spawning a research or personalization sub-agent — this eliminates a class of silent production failures where a stuck sub-agent could degrade all active sessions. The session token preservation fix for providers omitting usage metadata also closes a cost-accounting gap for multi-provider deployments; accurate token reporting is a prerequisite for per-client billing in on-premises setups.
+
+**The beta.1 + beta.2 pair on Apr 19 suggests stable promotion is imminent.** Two beta releases in the same day, each with focused fixes, is OpenClaw's typical pattern before promoting to stable. Expect v2026.4.19 stable within 24–48 hours. The full v2026.4.19 stable will bundle all routing, Telegram, CDP, Codex, and session isolation fixes — a meaningful operational upgrade over v2026.4.15.
+
+**Weekend content silence across all five blog competitors is consistent with the established Sun/Mon cadence pattern.** Apollo, Instantly, Smartlead, Salesforge, and Reachy.ai all produced no new content today. No new strategic signals. The Apollo Gumloop integration narrative from yesterday (Apr 19) remains the operative competitive pressure; no escalation today.
+
+**Reachy.ai day 14.** Two weeks of 404 with zero recovery signal moves this from "possible migration" to "confirmed long-term outage." The organic SEO window for "Reachy alternative" content remains open and is the only remaining play.
+
+**Manufacturing/export market**: Day 14 of zero vertical-specific content from any competitor. Still structurally uncontested.
+
+---
+
+## Action Items for PulseAgent
+
+- **Watch for OpenClaw v2026.4.19 stable promotion** — expected within 24–48 hours based on beta.1+beta.2 same-day pattern. Key upgrade driver: session-scoped nested agent isolation prevents stuck sub-agents from degrading all concurrent sequences. Prioritize this upgrade for any multi-sequence production deployment.
+- **Validate session token accounting in staging** — beta.2's fix for providers omitting usage metadata is relevant if PulseAgent uses any non-Anthropic provider (OpenAI, Ollama) in its agent stack. Verify token totals are accurate before next billing cycle.
+- **Execute the Gumloop+Apollo objection response** — carried over from Apr 19. Apollo is now embedded in HubSpot and Gumloop. Draft a one-paragraph response focused on: WhatsApp channel, local-language outreach, manufacturing vertical data depth, on-premises deployment. This objection is now live in demos.
+- **Publish the Reachy.ai alternative page** — day 14, organic window still open. Two-hour task. No further deferral is defensible; execute tomorrow when weekday publishing resumes.
+- **Use today's competitor content gap** — all five blog competitors are silent on Sunday. Any manufacturing-vertical content published today captures weekend researchers with zero competitive noise.
+
+---
+
+## Metadata
+
+- **Last checked**: 2026-04-20
+- **Next check**: 2026-04-21
+- **Sources**: apollo.io/blog (no new posts confirmed), instantly.ai/blog (no new posts since Apr 13), smartlead.ai/blog (no new posts since Apr 16), salesforge.ai/blog (no new posts since Apr 16), reachy.ai/blog (404, day 14), github.com/openclaw/openclaw/releases (v2026.4.19-beta.2 Apr 19 confirmed)
+
+---
+
+---
+
 # Competitor Intel — 2026-04-19
 
 ## Changes Detected
